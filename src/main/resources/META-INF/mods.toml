@@ -1,0 +1,28 @@
+modLoader="javafml" #mandatory
+loaderVersion="[40,)"
+license="MIT License https://github.com/McJty/YouTubeModding14/blob/1.16/LICENCE"
+[[mods]]
+modId="lostedit"
+version="${file.jarVersion}"
+displayName="LostRuins"
+description='''
+Making Lost Cities even more ruined
+'''
+[[dependencies.lostedit]]
+    modId="forge" #mandatory
+    mandatory=true
+    versionRange="[40.1.50,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.lostedit]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.2,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.lostedit]]
+    modId="lostcities"
+    mandatory=true
+    versionRange="[1.19-5.3.10,)"
+    ordering="AFTER"
+    side="BOTH"
