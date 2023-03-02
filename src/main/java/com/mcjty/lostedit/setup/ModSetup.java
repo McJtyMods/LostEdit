@@ -15,6 +15,7 @@ public class ModSetup extends DefaultModSetup {
 
     @Override
     public void init(FMLCommonSetupEvent e) {
+        LostEditMessages.registerMessages("lostedit");
     }
 
     @Override
