@@ -1,0 +1,21 @@
+window {
+    size(200,100)
+
+    panel('','vertical') {
+        bgthickness(-1)
+        bgfilled1(-7631989)
+        textfield('file') {
+            tooltips('The filename for this project')
+        }
+        button('new','New Project') {
+            tooltips('Create a new project')
+        }
+        button('load','Load Project') {
+            tooltips('Load an existing project')
+        }
+        button('save','Save Project') {
+            tooltips('Save current project')
+        }
+        label('')
+    }
+}
