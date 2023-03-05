@@ -3,13 +3,12 @@ package com.mcjty.lostedit.client;
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.setup.LostEditMessages;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mcjty.lib.gui.GuiItemScreen;
-import mcjty.lib.gui.ManualEntry;
-import mcjty.lib.gui.Window;
+import mcjty.lib.gui.*;
+import mcjty.lib.varia.ClientTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
-public class ProjectScreen extends GuiItemScreen {
+public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
 
     public ProjectScreen() {
         super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
@@ -19,6 +18,8 @@ public class ProjectScreen extends GuiItemScreen {
     public void init() {
         window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/project.gui"));
         super.init();
+        ClientTools.enableKeyboardRepeat();
+
     }
 
     @Override
@@ -28,5 +29,49 @@ public class ProjectScreen extends GuiItemScreen {
 
     public static void open() {
         Minecraft.getInstance().setScreen(new ProjectScreen());
+    }
+
+    @Override
+    public Window getWindow() {
+        return window;
+    }
+
+    @Override
+    public void keyTypedFromEvent(int keyCode, int scanCode) {
+        if (window != null) {
+            if (window.keyTyped(keyCode, scanCode)) {
+                super.keyPressed(keyCode, scanCode, 0); // @todo 1.14: modifiers?
+            }
+        }
+    }
+
+    @Override
+    public void charTypedFromEvent(char codePoint) {
+        if (window != null) {
+            if (window.charTyped(codePoint)) {
+                super.charTyped(codePoint, 0); // @todo 1.14: modifiers?
+            }
+        }
+    }
+
+    @Override
+    public boolean mouseClickedFromEvent(double x, double y, int button) {
+        WindowManager manager = getWindow().getWindowManager();
+        manager.mouseClicked(x, y, button);
+        return true;
+    }
+
+    @Override
+    public boolean mouseReleasedFromEvent(double x, double y, int button) {
+        WindowManager manager = getWindow().getWindowManager();
+        manager.mouseReleased(x, y, button);
+        return true;
+    }
+
+    @Override
+    public boolean mouseScrolledFromEvent(double x, double y, double amount) {
+        WindowManager manager = getWindow().getWindowManager();
+        manager.mouseScrolled(x, y, amount);
+        return true;
     }
 }

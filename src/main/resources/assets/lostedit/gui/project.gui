@@ -1,21 +1,34 @@
 window {
-    size(200,100)
+    size(400,200)
 
-    panel('','vertical') {
+    panel('','horizontal') {
         bgthickness(-1)
-        bgfilled1(-7631989)
-        textfield('file') {
-            tooltips('The filename for this project')
+        panel('','vertical') {
+            bgthickness(-1)
+            horizalign('ALIGN_LEFT')
+            desired(70, -1)
+            bgfilled1(-7631989)
+            textfield('file') {
+                tooltips('The filename for this project')
+                desired(-1, 16)
+            }
+            button('new','New') {
+                tooltips('Create a new project')
+                desired(60, 14)
+            }
+            button('load','Load') {
+                tooltips('Load an existing project')
+                desired(60, 14)
+            }
+            button('save','Save') {
+                tooltips('Save current project')
+                desired(60, 14)
+            }
+            label('')
         }
-        button('new','New Project') {
-            tooltips('Create a new project')
+        panel('', 'vertical') {
+            label('XXX 1')
+            label('XXX 2')
         }
-        button('load','Load Project') {
-            tooltips('Load an existing project')
-        }
-        button('save','Save Project') {
-            tooltips('Save current project')
-        }
-        label('')
     }
 }
