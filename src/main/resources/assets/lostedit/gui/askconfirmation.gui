@@ -1,0 +1,18 @@
+window {
+    size(400,50)
+
+    panel('','vertical') {
+        bgthickness(-1)
+        label('message') {
+            desired(-1, -1)
+        }
+        panel('','horizontal') {
+            button('yes','Yes') {
+                desired(60, 14)
+            }
+            button('no','No') {
+                desired(60, 14)
+            }
+        }
+    }
+}

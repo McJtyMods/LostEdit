@@ -1,0 +1,15 @@
+window {
+    size(400,50)
+
+    panel('','vertical') {
+        bgthickness(-1)
+        label('message') {
+            desired(-1, -1)
+        }
+        panel('','horizontal') {
+            button('ok','Ok') {
+                desired(60, 14)
+            }
+        }
+    }
+}

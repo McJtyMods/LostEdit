@@ -3,6 +3,7 @@ window {
     cmdevent('new','lostedit:newproject')
     cmdevent('load','lostedit:loadproject')
     cmdevent('save','lostedit:saveproject')
+    cmdevent('data','lostedit:savedata')
 
     panel('','horizontal') {
         bgthickness(-1)
@@ -13,6 +14,7 @@ window {
             bgfilled1(-7631989)
             textfield('file') {
                 tooltips('The filename for this project')
+                channel('file')
                 desired(-1, 16)
             }
             button('new','New') {
@@ -28,6 +30,11 @@ window {
             button('save','Save') {
                 tooltips('Save current project')
                 channel('save')
+                desired(60, 14)
+            }
+            button('data','Datapack') {
+                tooltips('Save current project as a datapack')
+                channel('data')
                 desired(60, 14)
             }
             label('')

@@ -30,6 +30,11 @@ public class LostEditMessages {
 
         INSTANCE = net;
 
+        net.registerMessage(id(), PacketFilenameToClient.class, PacketFilenameToClient::toBytes, PacketFilenameToClient::new, PacketFilenameToClient::handle);
+        net.registerMessage(id(), PacketAskConfirmation.class, PacketAskConfirmation::toBytes, PacketAskConfirmation::new, PacketAskConfirmation::handle);
+        net.registerMessage(id(), PacketShowMessage.class, PacketShowMessage::toBytes, PacketShowMessage::new, PacketShowMessage::handle);
+        net.registerMessage(id(), PacketConfirm.class, PacketConfirm::toBytes, PacketConfirm::new, PacketConfirm::handle);
+        net.registerMessage(id(), PacketCancel.class, PacketCancel::toBytes, PacketCancel::new, PacketCancel::handle);
         net.registerMessage(id(), PacketRequestDataFromServer.class, PacketRequestDataFromServer::toBytes, PacketRequestDataFromServer::new, new ChannelBoundHandler<>(net, PacketRequestDataFromServer::handle));
 
         PacketHandler.registerStandardMessages(id(), net);

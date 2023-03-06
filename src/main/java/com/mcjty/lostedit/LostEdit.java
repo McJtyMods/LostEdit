@@ -1,6 +1,7 @@
 package com.mcjty.lostedit;
 
 import com.mcjty.lostedit.project.Project;
+import com.mcjty.lostedit.project.ProjectManager;
 import com.mcjty.lostedit.setup.ClientSetup;
 import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
@@ -11,6 +12,9 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 @Mod(LostEdit.MODID)
@@ -22,7 +26,7 @@ public class LostEdit {
     public static ModSetup setup = new ModSetup();
 
     public static LostEdit instance;
-    public Project currentProject = null;
+    public final ProjectManager manager = new ProjectManager();
 
     public LostEdit() {
         instance = this;
