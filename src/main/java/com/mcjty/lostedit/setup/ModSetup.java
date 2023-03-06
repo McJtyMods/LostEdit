@@ -2,9 +2,9 @@ package com.mcjty.lostedit.setup;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.compat.LostCitiesCompat;
+import com.mcjty.lostedit.network.LostEditMessages;
 import mcjty.lib.setup.DefaultModSetup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class ModSetup extends DefaultModSetup {
@@ -16,6 +16,9 @@ public class ModSetup extends DefaultModSetup {
     @Override
     public void init(FMLCommonSetupEvent e) {
         LostEditMessages.registerMessages("lostedit");
+        e.enqueueWork(() -> {
+            CommandHandler.registerCommands();
+        });
     }
 
     @Override

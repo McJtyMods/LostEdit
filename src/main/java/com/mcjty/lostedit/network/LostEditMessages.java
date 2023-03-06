@@ -1,4 +1,4 @@
-package com.mcjty.lostedit.setup;
+package com.mcjty.lostedit.network;
 
 import com.mcjty.lostedit.LostEdit;
 import mcjty.lib.network.*;

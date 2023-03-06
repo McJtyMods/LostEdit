@@ -1,5 +1,8 @@
 window {
     size(400,200)
+    cmdevent('new','lostedit:newproject')
+    cmdevent('load','lostedit:loadproject')
+    cmdevent('save','lostedit:saveproject')
 
     panel('','horizontal') {
         bgthickness(-1)
@@ -14,14 +17,17 @@ window {
             }
             button('new','New') {
                 tooltips('Create a new project')
+                channel('new')
                 desired(60, 14)
             }
             button('load','Load') {
                 tooltips('Load an existing project')
+                channel('load')
                 desired(60, 14)
             }
             button('save','Save') {
                 tooltips('Save current project')
+                channel('save')
                 desired(60, 14)
             }
             label('')

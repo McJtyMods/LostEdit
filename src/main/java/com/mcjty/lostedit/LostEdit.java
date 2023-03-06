@@ -1,5 +1,6 @@
 package com.mcjty.lostedit;
 
+import com.mcjty.lostedit.project.Project;
 import com.mcjty.lostedit.setup.ClientSetup;
 import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
@@ -21,6 +22,7 @@ public class LostEdit {
     public static ModSetup setup = new ModSetup();
 
     public static LostEdit instance;
+    public Project currentProject = null;
 
     public LostEdit() {
         instance = this;

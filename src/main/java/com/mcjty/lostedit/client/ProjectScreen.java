@@ -1,7 +1,7 @@
 package com.mcjty.lostedit.client;
 
 import com.mcjty.lostedit.LostEdit;
-import com.mcjty.lostedit.setup.LostEditMessages;
+import com.mcjty.lostedit.network.LostEditMessages;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.varia.ClientTools;
