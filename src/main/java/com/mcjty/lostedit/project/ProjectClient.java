@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 public class ProjectClient {
 
     private static String filename;
+    private static ProjectInfo info = ProjectInfo.EMPTY;
 
     public static void setFilename(String filename) {
         ProjectClient.filename = filename;
@@ -17,5 +18,13 @@ public class ProjectClient {
 
     public static String getFilename() {
         return filename == null ? "" : filename;
+    }
+
+    public static void setProjectInfo(ProjectInfo info) {
+        ProjectClient.info = info;
+    }
+
+    public static ProjectInfo getProjectInfo() {
+        return info;
     }
 }

@@ -6,6 +6,7 @@ import com.mcjty.lostedit.project.ProjectClient;
 import com.mcjty.lostedit.setup.CommandHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.TextField;
 import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.typed.TypedMap;
@@ -29,6 +30,8 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
                     .build()));
         });
         ((TextField)window.findChild("file")).text(ProjectClient.getFilename());
+        ((Label)window.findChild("partsGlobal")).text("" + ProjectClient.getProjectInfo().partsGlobal());
+        ((Label)window.findChild("partsProject")).text("" + ProjectClient.getProjectInfo().partsProject());
         ClientTools.enableKeyboardRepeat();
     }
 

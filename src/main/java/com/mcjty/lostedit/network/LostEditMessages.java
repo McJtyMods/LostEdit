@@ -31,6 +31,7 @@ public class LostEditMessages {
         INSTANCE = net;
 
         net.registerMessage(id(), PacketFilenameToClient.class, PacketFilenameToClient::toBytes, PacketFilenameToClient::new, PacketFilenameToClient::handle);
+        net.registerMessage(id(), PacketProjectInformationToClient.class, PacketProjectInformationToClient::toBytes, PacketProjectInformationToClient::new, PacketProjectInformationToClient::handle);
         net.registerMessage(id(), PacketAskConfirmation.class, PacketAskConfirmation::toBytes, PacketAskConfirmation::new, PacketAskConfirmation::handle);
         net.registerMessage(id(), PacketShowMessage.class, PacketShowMessage::toBytes, PacketShowMessage::new, PacketShowMessage::handle);
         net.registerMessage(id(), PacketConfirm.class, PacketConfirm::toBytes, PacketConfirm::new, PacketConfirm::handle);

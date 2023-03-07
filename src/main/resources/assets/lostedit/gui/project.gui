@@ -40,6 +40,12 @@ window {
             label('')
         }
         panel('', 'vertical') {
+            panel('', 'horizontal') {
+                label('', 'Parts:')
+                label('partsGlobal', '')
+                label('', '/')
+                label('partsProject', '')
+            }
             label('XXX 1')
             label('XXX 2')
         }

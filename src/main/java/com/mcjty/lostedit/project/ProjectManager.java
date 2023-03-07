@@ -52,15 +52,24 @@ public class ProjectManager {
         return currentProjects.containsKey(player.getUUID());
     }
 
+    public boolean hasFilename(Player player) {
+        return filenames.containsKey(player.getUUID()) && !Objects.equals(filenames.get(player.getUUID()), "");
+    }
+
+    public String getFilename(Player player) {
+        return filenames.get(player.getUUID());
+    }
+
     // Server side, make new project
     public void newProject(Player player) {
         Project project = new Project();
         project.setFilename(filenames.computeIfAbsent(player.getUUID(),
                 uuid -> uuid.toString().substring(0, 10)));
         currentProjects.put(player.getUUID(), project);
+        syncProjectToClient(player);
     }
 
-    //; Server side, set filename
+    // Server side, set filename
     public void setFilename(Player player, String filename) {
         String current = filenames.get(player.getUUID());
         if (!Objects.equals(filename, current)) {
@@ -70,6 +79,28 @@ public class ProjectManager {
             }
             LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
                     new PacketFilenameToClient(filename));
+        }
+    }
+
+    public void syncProjectToClient(Player player) {
+        Project project = currentProjects.get(player.getUUID());
+        if (project != null) {
+            project.syncToClient(player);
+        }
+    }
+
+    public void saveProject(Player player) {
+        Project project = currentProjects.get(player.getUUID());
+        if (project != null) {
+            project.save(player);
+        }
+    }
+
+    public void loadProject(Player player) {
+        Project project = currentProjects.get(player.getUUID());
+        if (project != null) {
+            project.load(player);
+            syncProjectToClient(player);
         }
     }
 }

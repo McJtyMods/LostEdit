@@ -30,12 +30,24 @@ public class CommandHandler {
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_LOADPROJECT, (player, arguments) -> {
             ProjectManager manager = LostEdit.instance.manager;
-            manager.showMessage(player, "Not implemented yet!");
+            if (manager.hasProject(player)) {
+                manager.askConfirmation(player, "Do you want to replace the current project?", () -> {
+                    manager.loadProject(player);
+                });
+            } else {
+                manager.loadProject(player);
+            }
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEPROJECT, (player, arguments) -> {
             ProjectManager manager = LostEdit.instance.manager;
-            manager.showMessage(player, "Not implemented yet!");
+            if (manager.hasFilename(player)) {
+                manager.askConfirmation(player, "Are you sure you want to replace '" + manager.getFilename(player) + "'?", () -> {
+                    manager.saveProject(player);
+                });
+            } else {
+                manager.showMessage(player, "No filename set. Please enter a filename first");
+            }
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEDATA, (player, arguments) -> {

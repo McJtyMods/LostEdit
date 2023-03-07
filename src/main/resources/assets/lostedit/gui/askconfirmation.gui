@@ -3,6 +3,7 @@ window {
 
     panel('','vertical') {
         bgthickness(-1)
+        bgfilled1(-26334)
         label('message') {
             desired(-1, -1)
         }

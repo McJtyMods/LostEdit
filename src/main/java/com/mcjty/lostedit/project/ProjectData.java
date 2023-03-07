@@ -10,7 +10,7 @@ public class ProjectData {
 
     public static final Codec<ProjectData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                    Codec.list(PartRef.CODEC).fieldOf("parts").forGetter(l -> l.parts)
+                    Codec.list(PartRef.CODEC).fieldOf("partsProject").forGetter(l -> l.parts)
             ).apply(instance, ProjectData::new));
 
 
