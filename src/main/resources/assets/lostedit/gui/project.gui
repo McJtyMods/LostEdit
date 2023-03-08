@@ -4,6 +4,7 @@ window {
     cmdevent('load','lostedit:loadproject')
     cmdevent('save','lostedit:saveproject')
     cmdevent('data','lostedit:savedata')
+    cmdevent('parts','lostedit:partseditor')
 
     panel('','horizontal') {
         bgthickness(-1)
@@ -46,8 +47,11 @@ window {
                 label('', '/')
                 label('partsProject', '')
             }
-            label('XXX 1')
-            label('XXX 2')
+            button('parts', 'Parts') {
+                tooltips('Open the parts editor')
+                channel('parts')
+                desired(60, 14)
+            }
         }
     }
 }

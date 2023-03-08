@@ -2,58 +2,52 @@ package com.mcjty.lostedit.client;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.project.ProjectClient;
 import com.mcjty.lostedit.setup.CommandHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
-import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.WidgetList;
 import mcjty.lib.network.PacketSendServerCommand;
 import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ClientTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
-public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
+public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
 
-    private TextField fileWidget;
-    private Label partsGlobalWidget;
-    private Label partsProjectWidget;
-
-    public ProjectScreen() {
+    public PartsEditorScreen() {
         super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
     }
 
+    private TextField partWidget;
+    private WidgetList partsList;
+
     @Override
     public void init() {
-        window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/project.gui"));
+        window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/partseditor.gui"));
         super.init();
-        window.event("file", (source, params) -> {
-            network.sendToServer(new PacketSendServerCommand(LostEdit.MODID, CommandHandler.CMD_SETFILENAME, TypedMap.builder()
-                    .put(CommandHandler.PARAM_FILENAME, ((TextField)source).getText())
+        window.event("part", (source, params) -> {
+            network.sendToServer(new PacketSendServerCommand(LostEdit.MODID, CommandHandler.CMD_SETPARTNAME, TypedMap.builder()
+                    .put(CommandHandler.PARAM_PARTNAME, ((TextField)source).getText())
                     .build()));
         });
         ClientTools.enableKeyboardRepeat();
 
-        fileWidget = window.findChild("file");
-        partsGlobalWidget = window.findChild("partsGlobal");
-        partsProjectWidget = window.findChild("partsProject");
-    }
-
-    public void setFilename(String filename) {
-        fileWidget.text(filename);
+        partWidget = window.findChild("part");
+        partsList = window.findChild("parts");
     }
 
     @Override
     protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
-        fileWidget.text(ProjectClient.getFilename());
-        partsGlobalWidget.text("" + ProjectClient.getProjectInfo().partsGlobal());
-        partsProjectWidget.text("" + ProjectClient.getProjectInfo().partsProject().size());
         drawWindow(poseStack);
     }
 
+    public void setPartname(String partname) {
+        partWidget.text(partname);
+    }
+
     public static void open() {
-        Minecraft.getInstance().setScreen(new ProjectScreen());
+        Minecraft.getInstance().setScreen(new PartsEditorScreen());
     }
 
     @Override

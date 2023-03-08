@@ -18,18 +18,27 @@ import java.util.ArrayList;
 public class Project {
 
     private String filename;
+    private String partname;
     private ProjectData data;
 
     public Project() {
         this.data = new ProjectData(new ArrayList<>());
     }
 
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     public String getFilename() {
         return filename;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setPartname(String name) {
+        this.partname = name;
+    }
+
+    public String getPartname() {
+        return partname;
     }
 
     public void save(Player player) {
@@ -74,8 +83,8 @@ public class Project {
     }
 
     public void syncToClient(Player player) {
-        int globalParts = AssetRegistries.PARTS.getNumAssets();
-        ProjectInfo info = new ProjectInfo(filename, globalParts, data.getParts().size());
+        int globalParts = AssetRegistries.PARTS.getNumAssets(player.level);
+        ProjectInfo info = new ProjectInfo(filename, globalParts, data.getParts().stream().map(partRef -> new PartInfo(partRef.getPart())).toList());
         LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
                 new PacketProjectInformationToClient(info));
     }

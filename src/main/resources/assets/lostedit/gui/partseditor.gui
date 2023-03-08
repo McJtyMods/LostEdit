@@ -1,0 +1,53 @@
+window {
+    size(400,200)
+
+    cmdevent('new','lostedit:newpart')
+    cmdevent('clone','lostedit:clonepart')
+    cmdevent('delete','lostedit:deletepart')
+
+    panel('','horizontal') {
+        bgthickness(-1)
+        panel('','horizontal') {
+            desired(100, -1)
+            widgetlist('parts') {
+                channel('parts')
+                bgthickness(-1)
+                bgfilled1(-7631989)
+                propagate(true)
+            }
+            slider {
+                desired(10,-1)
+                scrollable('parts')
+            }
+            spacing(1)
+            horizmargin(3)
+        }
+        panel('','vertical') {
+            bgthickness(-1)
+            horizalign('ALIGN_LEFT')
+            desired(70, -1)
+            bgfilled1(-7631989)
+            textfield('part') {
+                tooltips('The name of the part we are editing')
+                channel('part')
+                desired(-1, 16)
+            }
+            button('new','New') {
+                tooltips('Create a new part')
+                channel('new')
+                desired(60, 14)
+            }
+            button('clone','Clone') {
+                tooltips('Clone an existing part')
+                channel('clone')
+                desired(60, 14)
+            }
+            button('delete','Delete') {
+                tooltips('Delete the current part')
+                channel('delete')
+                desired(60, 14)
+            }
+            label('')
+        }
+    }
+}

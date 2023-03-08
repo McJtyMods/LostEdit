@@ -1,9 +1,8 @@
 package com.mcjty.lostedit.project;
 
-import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketAskConfirmation;
-import com.mcjty.lostedit.network.PacketFilenameToClient;
+import com.mcjty.lostedit.network.PacketCurrentNamesToClient;
 import com.mcjty.lostedit.network.PacketShowMessage;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -52,6 +51,10 @@ public class ProjectManager {
         return currentProjects.containsKey(player.getUUID());
     }
 
+    public Project getProject(Player player) {
+        return currentProjects.get(player.getUUID());
+    }
+
     public boolean hasFilename(Player player) {
         return filenames.containsKey(player.getUUID()) && !Objects.equals(filenames.get(player.getUUID()), "");
     }
@@ -78,7 +81,7 @@ public class ProjectManager {
                 currentProjects.get(player.getUUID()).setFilename(filename);
             }
             LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-                    new PacketFilenameToClient(filename));
+                    new PacketCurrentNamesToClient(filename, getPartName(player)));
         }
     }
 
@@ -102,5 +105,30 @@ public class ProjectManager {
             project.load(player);
             syncProjectToClient(player);
         }
+    }
+
+    public void newPart(Player player) {
+
+    }
+
+    public void deletePart(Player player) {
+
+    }
+
+    public void setPartname(Player player, String name) {
+        Project project = getProject(player);
+        if (project != null) {
+            project.setPartname(name);
+            LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
+                    new PacketCurrentNamesToClient(getFilename(player), getPartName(player)));
+        }
+    }
+
+    public String getPartName(Player player) {
+        Project project = getProject(player);
+        if (project != null) {
+            return project.getPartname();
+        }
+        return "";
     }
 }
