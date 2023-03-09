@@ -100,11 +100,10 @@ public class ProjectManager {
     }
 
     public void loadProject(Player player) {
+        newProject(player);
         Project project = currentProjects.get(player.getUUID());
-        if (project != null) {
-            project.load(player);
-            syncProjectToClient(player);
-        }
+        project.load(player);
+        syncProjectToClient(player);
     }
 
     public void newPart(Player player) {

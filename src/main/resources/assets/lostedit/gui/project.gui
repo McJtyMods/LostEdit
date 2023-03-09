@@ -42,15 +42,16 @@ window {
         }
         panel('', 'vertical') {
             panel('', 'horizontal') {
+                desired(-1, 20)
                 label('', 'Parts:')
                 label('partsGlobal', '')
                 label('', '/')
                 label('partsProject', '')
-            }
-            button('parts', 'Parts') {
-                tooltips('Open the parts editor')
-                channel('parts')
-                desired(60, 14)
+                button('parts', 'Parts') {
+                    tooltips('Open the parts editor')
+                    channel('parts')
+                    desired(60, 14)
+                }
             }
         }
     }

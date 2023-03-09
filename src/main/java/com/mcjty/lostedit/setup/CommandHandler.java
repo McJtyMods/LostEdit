@@ -2,10 +2,14 @@ package com.mcjty.lostedit.setup;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.PartsEditorScreen;
+import com.mcjty.lostedit.network.LostEditMessages;
+import com.mcjty.lostedit.network.PacketOpenScreen;
 import com.mcjty.lostedit.project.ProjectManager;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.PacketDistributor;
 
 public class CommandHandler {
 
@@ -67,8 +71,7 @@ public class CommandHandler {
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_PARTSEDITOR, (player, arguments) -> {
-            ProjectManager manager = LostEdit.instance.manager;
-            PartsEditorScreen.open();
+            LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new PacketOpenScreen(PacketOpenScreen.SCREEN_PARTEDITOR));
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_NEWPART, (player, arguments) -> {

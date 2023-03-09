@@ -46,6 +46,9 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
 
     @Override
     protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+        if (window == null) {
+            return;
+        }
         fileWidget.text(ProjectClient.getFilename());
         partsGlobalWidget.text("" + ProjectClient.getProjectInfo().partsGlobal());
         partsProjectWidget.text("" + ProjectClient.getProjectInfo().partsProject().size());
