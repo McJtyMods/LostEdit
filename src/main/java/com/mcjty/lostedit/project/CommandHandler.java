@@ -2,13 +2,17 @@ package com.mcjty.lostedit.project;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.servergui.PacketOpenScreen;
+import com.mcjty.lostedit.servergui.ServerGui;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 
+import java.util.List;
+
 import static com.mcjty.lostedit.LostEdit.manager;
 import static com.mcjty.lostedit.LostEdit.serverGui;
+import static com.mcjty.lostedit.servergui.ServerGui.parameter;
 
 public class CommandHandler {
 
@@ -30,24 +34,26 @@ public class CommandHandler {
     public static void registerCommands() {
         McJtyLib.registerCommand(LostEdit.MODID, CMD_NEWPROJECT, (player, arguments) -> {
             serverGui().askConfirmationConditionally(player, manager().hasProject(player), "Do you want to replace the current project?", () -> {
-                serverGui().askParameters(player, "Enter a name for the new project", TypedMap.builder().put(PARAM_PROJECTNAME, "").build(), result -> {
+                serverGui().askParameters(player, "Enter a name for the new project", List.of(parameter(PARAM_PROJECTNAME, "")), result -> {
                     String projectName = result.get(PARAM_PROJECTNAME);
-                    if (projectName.isEmpty()) {
+                    if (projectName == null || projectName.isEmpty()) {
                         serverGui().showMessage(player, "You must enter a name for the project!");
+                    } else {
+                        manager().newProject(player, projectName);
                     }
-                    manager().newProject(player, projectName);
                 });
             });
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_LOADPROJECT, (player, arguments) -> {
             serverGui().askConfirmationConditionally(player, manager().hasProject(player), "Do you want to replace the current project?", () -> {
-                serverGui().askParameters(player, "Enter the name of the project to load", TypedMap.builder().put(PARAM_PROJECTNAME, "").build(), result -> {
+                serverGui().askParameters(player, "Enter the name of the project to load", List.of(parameter(PARAM_PROJECTNAME, "")), result -> {
                     String projectName = result.get(PARAM_PROJECTNAME);
-                    if (projectName.isEmpty()) {
+                    if (projectName == null || projectName.isEmpty()) {
                         serverGui().showMessage(player, "You must enter a name for the project!");
+                    } else {
+                        manager().loadProject(player, projectName);
                     }
-                    manager().loadProject(player, projectName);
                 });
             });
             return true;
@@ -67,15 +73,13 @@ public class CommandHandler {
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_NEWPART, (player, arguments) -> {
             serverGui().askParameters(player, "Give parameters for part",
-                    TypedMap.builder()
-                            .put(PARAM_PARTNAME, "")
-                            .put(PARAM_HEIGHT, 6)
-                            .put(PARAM_XSIZE, 16)
-                            .put(PARAM_ZSIZE, 16)
-                            .build(),
+                    List.of(parameter(PARAM_PARTNAME, ""),
+                            parameter(PARAM_HEIGHT, 6),
+                            parameter(PARAM_XSIZE, 16),
+                            parameter(PARAM_ZSIZE, 16)),
                     params -> {
                         String partName = params.get(PARAM_PARTNAME);
-                        if (partName.isEmpty()) {
+                        if (partName == null || partName.isEmpty()) {
                             serverGui().showMessage(player, "Partname cannot be empty!");
                             return;
                         }

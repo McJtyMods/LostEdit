@@ -31,10 +31,6 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
         partsProjectWidget = window.findChild("partsProject");
     }
 
-    public void setFilename(String filename) {
-        projectNameWidget.text(filename);
-    }
-
     @Override
     protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
         if (window == null) {

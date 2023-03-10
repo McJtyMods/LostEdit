@@ -3,6 +3,7 @@ package com.mcjty.lostedit.client;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.servergui.PacketCancel;
 import com.mcjty.lostedit.servergui.PacketConfirmParameters;
+import com.mcjty.lostedit.servergui.ServerGui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.Window;
@@ -16,14 +17,15 @@ import mcjty.lib.typed.TypedMap;
 import net.minecraft.client.Minecraft;
 
 import java.awt.*;
+import java.util.List;
 
 public class AskParameters extends GuiItemScreen implements IKeyReceiver {
 
     private final String message;
-    private final TypedMap input;
+    private final List<ServerGui.Parameter> input;
     private final TypedMap.Builder builder = TypedMap.builder();
 
-    public AskParameters(String message, TypedMap input) {
+    public AskParameters(String message, List<ServerGui.Parameter> input) {
         super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
         this.message = message;
         this.input = input;
@@ -36,41 +38,48 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
 
         Panel toplevel = Widgets.vertical().filledRectThickness(2).filledBackground(0xff8899aa);
         toplevel.children(Widgets.label(this.message).desiredWidth(-1).desiredHeight(20));
-        for (Key<?> key : input.getKeys()) {
+        for (ServerGui.Parameter parameter : input) {
+            Key<?> key = parameter.key();
             Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(20);
             toplevel.children(horizontal);
             horizontal.children(Widgets.label(key.name() + ": "));
             if (key.type() == Type.BOOLEAN) {
-                Boolean value = input.get((Key<Boolean>)key);
+                Boolean value = parameter.getValue(Type.BOOLEAN);
                 ToggleButton button = new ToggleButton();
                 horizontal.children(button.pressed(value).event(() -> {
                     builder.put((Key<Boolean>)key, button.isPressed());
                 }));
+                builder.put((Key<Boolean>)key, value);
             } else if (key.type() == Type.STRING) {
-                String value = input.get((Key<String>)key);
+                String value = parameter.getValue(Type.STRING);
                 horizontal.children(new TextField().text(value).event((v) -> {
                     builder.put((Key<String>)key, v);
                 }));
+                builder.put((Key<String>)key, value);
             } else if (key.type() == Type.INTEGER) {
-                Integer value = input.get((Key<Integer>)key);
+                Integer value = parameter.getValue(Type.INTEGER);
                 horizontal.children(new TextField().text(value.toString()).event((v) -> {
                     builder.put((Key<Integer>)key, Integer.parseInt(v));
                 }));
+                builder.put((Key<Integer>)key, value);
             } else if (key.type() == Type.DOUBLE) {
-                Double value = input.get((Key<Double>)key);
+                Double value = parameter.getValue(Type.DOUBLE);
                 horizontal.children(new TextField().text(value.toString()).event((v) -> {
                     builder.put((Key<Double>)key, Double.parseDouble(v));
                 }));
+                builder.put((Key<Double>)key, value);
             } else if (key.type() == Type.FLOAT) {
-                Float value = input.get((Key<Float>)key);
+                Float value = parameter.getValue(Type.FLOAT);
                 horizontal.children(new TextField().text(value.toString()).event((v) -> {
                     builder.put((Key<Float>)key, Float.parseFloat(v));
                 }));
+                builder.put((Key<Float>)key, value);
             } else if (key.type() == Type.LONG) {
-                Long value = input.get((Key<Long>)key);
+                Long value = parameter.getValue(Type.LONG);
                 horizontal.children(new TextField().text(value.toString()).event((v) -> {
                     builder.put((Key<Long>)key, Long.parseLong(v));
                 }));
+                builder.put((Key<Long>)key, value);
             } else {
                 throw new RuntimeException("Unknown type!");
             }
@@ -103,7 +112,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
         drawWindow(poseStack);
     }
 
-    public static void open(String message, TypedMap input) {
+    public static void open(String message, List<ServerGui.Parameter> input) {
         Minecraft.getInstance().pushGuiLayer(new AskParameters(message, input));
     }
 

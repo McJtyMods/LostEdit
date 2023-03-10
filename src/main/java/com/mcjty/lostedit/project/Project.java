@@ -8,7 +8,6 @@ import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.JsonOps;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
-import mcjty.lostcities.worldgen.lost.regassets.data.PartRef;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
@@ -22,8 +21,8 @@ import static com.mcjty.lostedit.LostEdit.serverGui;
 
 public class Project {
 
-    private String projectName;
-    private String partName;
+    private String projectName = "";
+    private String partName = "";
     private ProjectData data;
     private int partListIndex = 0;
 

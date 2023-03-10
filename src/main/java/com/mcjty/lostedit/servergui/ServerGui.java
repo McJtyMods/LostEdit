@@ -1,12 +1,16 @@
 package com.mcjty.lostedit.servergui;
 
 import com.mcjty.lostedit.network.LostEditMessages;
+import mcjty.lib.typed.Key;
+import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -18,8 +22,17 @@ public class ServerGui {
     // Action to perform when parameters are given
     private final Map<UUID, Consumer<TypedMap>> serverActionsWithParameters = new HashMap<>();
 
+    public record Parameter(Key key, Object value) {
+        public <T> T getValue(Type<T> type) {
+            return (T) value;
+        }
+    }
+    public static <T> Parameter parameter(Key<T> key, T value) {
+        return new Parameter(key, value);
+    }
+
     // Ask for parameters before doing some server code
-    public void askParameters(Player player, String message, TypedMap input, Consumer<TypedMap> action) {
+    public void askParameters(Player player, String message, List<Parameter> input, Consumer<TypedMap> action) {
         serverActionsWithParameters.put(player.getUUID(), action);
         LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
                 new PacketAskParameters(message, input));
