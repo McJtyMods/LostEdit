@@ -1,6 +1,6 @@
 package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.client.ShowMessage;
+import com.mcjty.lostedit.client.gui.ShowMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 

@@ -3,6 +3,8 @@ package com.mcjty.lostedit.project;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mcjty.lostedit.client.PartInfo;
+import com.mcjty.lostedit.client.ProjectInfo;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.JsonOps;
@@ -10,11 +12,13 @@ import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.mcjty.lostedit.LostEdit.serverGui;
@@ -22,12 +26,11 @@ import static com.mcjty.lostedit.LostEdit.serverGui;
 public class Project {
 
     private String projectName = "";
-    private String partName = "";
     private ProjectData data;
     private int partListIndex = 0;
 
     public Project() {
-        this.data = new ProjectData(new HashMap<>());
+        this.data = new ProjectData();
     }
 
     public void setProjectName(String projectName) {
@@ -82,13 +85,21 @@ public class Project {
 
     public void syncToClient(Player player) {
         int globalParts = AssetRegistries.PARTS.getNumAssets(player.level);
-        ProjectInfo info = new ProjectInfo(projectName, partName, globalParts, data.getParts().keySet().stream().map(PartInfo::new).toList(), partListIndex);
+        Map<String, PartInfo> parts = new HashMap<>();
+        for (Map.Entry<String, BuildingPartRE> entry : data.getParts().entrySet()) {
+            BuildingPartRE part = entry.getValue();
+            parts.put(entry.getKey(), new PartInfo(part.getSlices().length));
+        }
+        ProjectInfo info = new ProjectInfo(projectName, data.getPartName(), globalParts, parts,
+                partListIndex,
+                data.getEditingAtDimension(),
+                data.getEditingAtChunkX(), data.getEditingAtChunkZ(), data.getEditingAtY());
         LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
                 new PacketProjectInformationToClient(info));
     }
 
     public void newPart(Player player, String partName, int xSize, int zSize, int height) {
-        this.partName = partName;
+        data.setPartName(partName);
         data.addPart(partName, new BuildingPartRE(xSize, zSize, new ArrayList<>(height), Optional.empty(), Optional.empty(), Optional.empty()));
         partListIndex++;
         syncToClient(player);
@@ -101,6 +112,12 @@ public class Project {
     }
 
     public String getPartName() {
-        return partName;
+        return data.getPartName();
+    }
+
+    public void editPart(Player player) {
+        ChunkPos pos = new ChunkPos(player.blockPosition());
+        data.startEditing(player.level.dimension(), pos.x, pos.z, player.blockPosition().getY());
+        syncToClient(player);
     }
 }

@@ -1,6 +1,6 @@
 package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.client.AskParameters;
+import com.mcjty.lostedit.client.gui.AskParameters;
 import mcjty.lib.network.TypedMapTools;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
@@ -18,6 +18,7 @@ public class PacketAskParameters {
         buf.writeUtf(message);
         buf.writeShort(input.size());
         for (ServerGui.Parameter parameter : input) {
+            buf.writeBoolean(parameter.readonly());
             TypedMapTools.writeArgument(buf, parameter.key(), parameter.value());
         }
     }
@@ -27,7 +28,8 @@ public class PacketAskParameters {
         int size = buf.readShort();
         input = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
-            TypedMapTools.readArgument(buf, (key, o) -> input.add(new ServerGui.Parameter(key, o)));
+            boolean readonly = buf.readBoolean();
+            TypedMapTools.readArgument(buf, (key, o) -> input.add(new ServerGui.Parameter(key, o, readonly)));
         }
     }
 
@@ -39,7 +41,12 @@ public class PacketAskParameters {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            AskParameters.open(message, input);
+            try {
+                AskParameters.open(message, input);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         });
         ctx.setPacketHandled(true);
     }

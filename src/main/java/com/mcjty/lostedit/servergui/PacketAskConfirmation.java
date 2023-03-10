@@ -1,6 +1,6 @@
 package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.client.AskConfirmation;
+import com.mcjty.lostedit.client.gui.AskConfirmation;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -25,7 +25,12 @@ public class PacketAskConfirmation {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            AskConfirmation.open(message);
+            try {
+                AskConfirmation.open(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         });
         ctx.setPacketHandled(true);
     }

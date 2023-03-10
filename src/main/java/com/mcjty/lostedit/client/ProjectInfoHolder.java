@@ -1,12 +1,12 @@
-package com.mcjty.lostedit.project;
+package com.mcjty.lostedit.client;
 
 // Client side project data
-public class ProjectClient {
+public class ProjectInfoHolder {
 
     private static ProjectInfo info = ProjectInfo.EMPTY;
 
     public static void setProjectInfo(ProjectInfo info) {
-        ProjectClient.info = info;
+        ProjectInfoHolder.info = info;
     }
 
     public static ProjectInfo getProjectInfo() {

@@ -1,7 +1,7 @@
 package com.mcjty.lostedit.network;
 
-import com.mcjty.lostedit.project.ProjectClient;
-import com.mcjty.lostedit.project.ProjectInfo;
+import com.mcjty.lostedit.client.ProjectInfoHolder;
+import com.mcjty.lostedit.client.ProjectInfo;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -26,7 +26,7 @@ public class PacketProjectInformationToClient {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            ProjectClient.setProjectInfo(info);
+            ProjectInfoHolder.setProjectInfo(info);
         });
         ctx.setPacketHandled(true);
     }

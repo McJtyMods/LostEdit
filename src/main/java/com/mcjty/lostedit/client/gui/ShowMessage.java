@@ -1,4 +1,4 @@
-package com.mcjty.lostedit.client;
+package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;

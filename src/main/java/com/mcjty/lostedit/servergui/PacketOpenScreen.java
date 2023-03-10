@@ -1,7 +1,7 @@
 package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.client.PartsEditorScreen;
-import com.mcjty.lostedit.client.ProjectScreen;
+import com.mcjty.lostedit.client.gui.PartsEditorScreen;
+import com.mcjty.lostedit.client.gui.ProjectScreen;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 

@@ -2,17 +2,16 @@ package com.mcjty.lostedit.project;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.servergui.PacketOpenScreen;
-import com.mcjty.lostedit.servergui.ServerGui;
 import mcjty.lib.McJtyLib;
 import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
-import mcjty.lib.typed.TypedMap;
 
 import java.util.List;
 
 import static com.mcjty.lostedit.LostEdit.manager;
 import static com.mcjty.lostedit.LostEdit.serverGui;
 import static com.mcjty.lostedit.servergui.ServerGui.parameter;
+import static com.mcjty.lostedit.servergui.ServerGui.parameterRO;
 
 public class CommandHandler {
 
@@ -24,6 +23,7 @@ public class CommandHandler {
     public static final String CMD_NEWPART = "newpart";
     public static final String CMD_CLONEPART = "clonepart";
     public static final String CMD_DELETEPART = "deletepart";
+    public static final String CMD_EDITPART = "editpart";
 
     public static final Key<String> PARAM_PROJECTNAME = new Key<>("Name", Type.STRING);
     public static final Key<String> PARAM_PARTNAME = new Key<>("Name", Type.STRING);
@@ -75,8 +75,8 @@ public class CommandHandler {
             serverGui().askParameters(player, "Give parameters for part",
                     List.of(parameter(PARAM_PARTNAME, ""),
                             parameter(PARAM_HEIGHT, 6),
-                            parameter(PARAM_XSIZE, 16),
-                            parameter(PARAM_ZSIZE, 16)),
+                            parameterRO(PARAM_XSIZE, 16),
+                            parameterRO(PARAM_ZSIZE, 16)),
                     params -> {
                         String partName = params.get(PARAM_PARTNAME);
                         if (partName == null || partName.isEmpty()) {
@@ -104,6 +104,10 @@ public class CommandHandler {
             serverGui().askConfirmation(player, "Are you sure you want to delete this part?", () -> {
                 manager().deletePart(player, part);
             });
+            return true;
+        });
+        McJtyLib.registerCommand(LostEdit.MODID, CMD_EDITPART, (player, arguments) -> {
+            manager().editPart(player);
             return true;
         });
     }

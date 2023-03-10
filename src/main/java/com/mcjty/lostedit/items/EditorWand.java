@@ -1,6 +1,6 @@
 package com.mcjty.lostedit.items;
 
-import com.mcjty.lostedit.client.ProjectScreen;
+import com.mcjty.lostedit.client.gui.ProjectScreen;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;

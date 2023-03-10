@@ -77,4 +77,8 @@ public class ProjectManager {
     public String getPart(Player player) {
         return executeOnProjectWithResult(player, Project::getPartName, null);
     }
+
+    public void editPart(Player player) {
+        executeOnProject(player, project -> project.editPart(player));
+    }
 }

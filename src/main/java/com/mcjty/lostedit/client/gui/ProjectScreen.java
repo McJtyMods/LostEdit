@@ -1,8 +1,8 @@
-package com.mcjty.lostedit.client;
+package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
+import com.mcjty.lostedit.client.ProjectInfoHolder;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.project.ProjectClient;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Label;
@@ -36,9 +36,9 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
         if (window == null) {
             return;
         }
-        projectNameWidget.text(ProjectClient.getProjectInfo().projectName());
-        partsGlobalWidget.text(String.valueOf(ProjectClient.getProjectInfo().partsGlobal()));
-        partsProjectWidget.text(String.valueOf(ProjectClient.getProjectInfo().partsProject().size()));
+        projectNameWidget.text(ProjectInfoHolder.getProjectInfo().projectName());
+        partsGlobalWidget.text(String.valueOf(ProjectInfoHolder.getProjectInfo().partsGlobal()));
+        partsProjectWidget.text(String.valueOf(ProjectInfoHolder.getProjectInfo().partsProject().size()));
         drawWindow(poseStack);
     }
 

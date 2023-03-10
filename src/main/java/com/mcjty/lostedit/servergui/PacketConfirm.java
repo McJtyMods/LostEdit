@@ -21,7 +21,12 @@ public class PacketConfirm {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            serverGui().confirm(ctx.getSender());
+            try {
+                serverGui().confirm(ctx.getSender());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         });
         ctx.setPacketHandled(true);
     }

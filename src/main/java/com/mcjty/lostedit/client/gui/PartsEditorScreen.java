@@ -1,9 +1,9 @@
-package com.mcjty.lostedit.client;
+package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
+import com.mcjty.lostedit.client.ProjectInfoHolder;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.project.PartInfo;
-import com.mcjty.lostedit.project.ProjectClient;
+import com.mcjty.lostedit.client.PartInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Label;
@@ -34,19 +34,19 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     private void populateList() {
-        if (partsListVersion >= ProjectClient.getProjectInfo().partsListVersion()) {
+        if (partsListVersion >= ProjectInfoHolder.getProjectInfo().partsListVersion()) {
             return;
         }
-        partsListVersion = ProjectClient.getProjectInfo().partsListVersion();
+        partsListVersion = ProjectInfoHolder.getProjectInfo().partsListVersion();
         partsList.removeChildren();
-        for (PartInfo part : ProjectClient.getProjectInfo().partsProject()) {
-            partsList.children(Widgets.label(part.name()));
+        for (var part : ProjectInfoHolder.getProjectInfo().partsProject().entrySet()) {
+            partsList.children(Widgets.label(part.getKey()));
         }
     }
 
     @Override
     protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
-        partWidget.text(ProjectClient.getProjectInfo().partName());
+        partWidget.text(ProjectInfoHolder.getProjectInfo().partName());
         populateList();
         drawWindow(poseStack);
     }

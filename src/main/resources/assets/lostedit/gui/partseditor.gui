@@ -4,6 +4,7 @@ window {
     cmdevent('new','lostedit:newpart')
     cmdevent('clone','lostedit:clonepart')
     cmdevent('delete','lostedit:deletepart')
+    cmdevent('edit','lostedit:editpart')
 
     panel('','horizontal') {
         bgthickness(-1)
@@ -45,6 +46,17 @@ window {
             button('delete','Delete') {
                 tooltips('Delete the current part')
                 channel('delete')
+                desired(60, 14)
+            }
+            label('')
+        }
+        panel('','vertical') {
+            bgthickness(-1)
+            horizalign('ALIGN_LEFT')
+            bgfilled1(-7631989)
+            button('edit','Edit') {
+                tooltips('Edit the current part')
+                channel('edit')
                 desired(60, 14)
             }
             label('')

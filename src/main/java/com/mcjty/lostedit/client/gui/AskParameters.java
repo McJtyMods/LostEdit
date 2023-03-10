@@ -1,12 +1,12 @@
-package com.mcjty.lostedit.client;
+package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.servergui.PacketCancel;
 import com.mcjty.lostedit.servergui.PacketConfirmParameters;
 import com.mcjty.lostedit.servergui.ServerGui;
 import com.mojang.blaze3d.vertex.PoseStack;
-import mcjty.lib.gui.*;
 import mcjty.lib.gui.Window;
+import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Panel;
 import mcjty.lib.gui.widgets.TextField;
@@ -37,46 +37,46 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
         super.init();
 
         Panel toplevel = Widgets.vertical().filledRectThickness(2).filledBackground(0xff8899aa);
-        toplevel.children(Widgets.label(this.message).desiredWidth(-1).desiredHeight(20));
+        toplevel.children(Widgets.label(this.message).desiredWidth(-1).desiredHeight(18));
         for (ServerGui.Parameter parameter : input) {
             Key<?> key = parameter.key();
-            Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(20);
+            Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
             toplevel.children(horizontal);
             horizontal.children(Widgets.label(key.name() + ": "));
             if (key.type() == Type.BOOLEAN) {
                 Boolean value = parameter.getValue(Type.BOOLEAN);
                 ToggleButton button = new ToggleButton();
-                horizontal.children(button.pressed(value).event(() -> {
+                horizontal.children(button.pressed(value).enabled(!parameter.readonly()).event(() -> {
                     builder.put((Key<Boolean>)key, button.isPressed());
                 }));
                 builder.put((Key<Boolean>)key, value);
             } else if (key.type() == Type.STRING) {
                 String value = parameter.getValue(Type.STRING);
-                horizontal.children(new TextField().text(value).event((v) -> {
+                horizontal.children(new TextField().text(value).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<String>)key, v);
                 }));
                 builder.put((Key<String>)key, value);
             } else if (key.type() == Type.INTEGER) {
                 Integer value = parameter.getValue(Type.INTEGER);
-                horizontal.children(new TextField().text(value.toString()).event((v) -> {
+                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Integer>)key, Integer.parseInt(v));
                 }));
                 builder.put((Key<Integer>)key, value);
             } else if (key.type() == Type.DOUBLE) {
                 Double value = parameter.getValue(Type.DOUBLE);
-                horizontal.children(new TextField().text(value.toString()).event((v) -> {
+                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Double>)key, Double.parseDouble(v));
                 }));
                 builder.put((Key<Double>)key, value);
             } else if (key.type() == Type.FLOAT) {
                 Float value = parameter.getValue(Type.FLOAT);
-                horizontal.children(new TextField().text(value.toString()).event((v) -> {
+                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Float>)key, Float.parseFloat(v));
                 }));
                 builder.put((Key<Float>)key, value);
             } else if (key.type() == Type.LONG) {
                 Long value = parameter.getValue(Type.LONG);
-                horizontal.children(new TextField().text(value.toString()).event((v) -> {
+                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Long>)key, Long.parseLong(v));
                 }));
                 builder.put((Key<Long>)key, value);
@@ -84,7 +84,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
                 throw new RuntimeException("Unknown type!");
             }
         }
-        Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(20);
+        Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
         toplevel.children(horizontal);
         Button cancelButton = new Button().text("Cancel").event(() -> {
             network.sendToServer(new PacketCancel());

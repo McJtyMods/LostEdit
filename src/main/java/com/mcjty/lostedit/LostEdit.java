@@ -1,5 +1,6 @@
 package com.mcjty.lostedit;
 
+import com.mcjty.lostedit.client.rendering.EditorRenderer;
 import com.mcjty.lostedit.project.ProjectManager;
 import com.mcjty.lostedit.servergui.ServerGui;
 import com.mcjty.lostedit.setup.ClientSetup;
@@ -7,6 +8,7 @@ import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -34,6 +36,7 @@ public class LostEdit {
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             bus.addListener(ClientSetup::initClient);
+            MinecraftForge.EVENT_BUS.addListener(EditorRenderer::render);
         });
     }
 

@@ -22,13 +22,17 @@ public class ServerGui {
     // Action to perform when parameters are given
     private final Map<UUID, Consumer<TypedMap>> serverActionsWithParameters = new HashMap<>();
 
-    public record Parameter(Key key, Object value) {
+    public record Parameter(Key key, Object value, boolean readonly) {
         public <T> T getValue(Type<T> type) {
             return (T) value;
         }
     }
     public static <T> Parameter parameter(Key<T> key, T value) {
-        return new Parameter(key, value);
+        return new Parameter(key, value, false);
+    }
+
+    public static <T> Parameter parameterRO(Key<T> key, T value) {
+        return new Parameter(key, value, true);
     }
 
     // Ask for parameters before doing some server code
