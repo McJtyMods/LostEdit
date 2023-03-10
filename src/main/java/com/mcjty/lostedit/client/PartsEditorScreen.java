@@ -2,13 +2,13 @@ package com.mcjty.lostedit.client;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.setup.CommandHandler;
+import com.mcjty.lostedit.project.PartInfo;
+import com.mcjty.lostedit.project.ProjectClient;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
-import mcjty.lib.gui.widgets.TextField;
+import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.WidgetList;
-import mcjty.lib.network.PacketSendServerCommand;
-import mcjty.lib.typed.TypedMap;
+import mcjty.lib.gui.widgets.Widgets;
 import mcjty.lib.varia.ClientTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -19,31 +19,36 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
         super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
     }
 
-    private TextField partWidget;
+    private Label partWidget;
     private WidgetList partsList;
+    private int partsListVersion = -1;
 
     @Override
     public void init() {
         window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/partseditor.gui"));
         super.init();
-        window.event("part", (source, params) -> {
-            network.sendToServer(new PacketSendServerCommand(LostEdit.MODID, CommandHandler.CMD_SETPARTNAME, TypedMap.builder()
-                    .put(CommandHandler.PARAM_PARTNAME, ((TextField)source).getText())
-                    .build()));
-        });
         ClientTools.enableKeyboardRepeat();
 
         partWidget = window.findChild("part");
         partsList = window.findChild("parts");
     }
 
-    @Override
-    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
-        drawWindow(poseStack);
+    private void populateList() {
+        if (partsListVersion >= ProjectClient.getProjectInfo().partsListVersion()) {
+            return;
+        }
+        partsListVersion = ProjectClient.getProjectInfo().partsListVersion();
+        partsList.removeChildren();
+        for (PartInfo part : ProjectClient.getProjectInfo().partsProject()) {
+            partsList.children(Widgets.label(part.name()));
+        }
     }
 
-    public void setPartname(String partname) {
-        partWidget.text(partname);
+    @Override
+    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+        partWidget.text(ProjectClient.getProjectInfo().partName());
+        populateList();
+        drawWindow(poseStack);
     }
 
     public static void open() {

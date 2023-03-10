@@ -1,10 +1,11 @@
-package com.mcjty.lostedit.network;
+package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.LostEdit;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
+
+import static com.mcjty.lostedit.LostEdit.serverGui;
 
 public class PacketCancel {
 
@@ -20,7 +21,7 @@ public class PacketCancel {
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            LostEdit.instance.manager.cancel(ctx.getSender());
+            serverGui().cancel(ctx.getSender());
         });
         ctx.setPacketHandled(true);
     }

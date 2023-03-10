@@ -1,12 +1,12 @@
-package com.mcjty.lostedit.network;
+package com.mcjty.lostedit.servergui;
 
-import com.mcjty.lostedit.client.ShowMessage;
+import com.mcjty.lostedit.client.AskConfirmation;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketShowMessage {
+public class PacketAskConfirmation {
 
     private final String message;
 
@@ -14,18 +14,18 @@ public class PacketShowMessage {
         buf.writeUtf(message);
     }
 
-    public PacketShowMessage(FriendlyByteBuf buf) {
+    public PacketAskConfirmation(FriendlyByteBuf buf) {
         message = buf.readUtf(32767);
     }
 
-    public PacketShowMessage(String message) {
+    public PacketAskConfirmation(String message) {
         this.message = message;
     }
 
     public void handle(Supplier<NetworkEvent.Context> supplier) {
         NetworkEvent.Context ctx = supplier.get();
         ctx.enqueueWork(() -> {
-            ShowMessage.open(message);
+            AskConfirmation.open(message);
         });
         ctx.setPacketHandled(true);
     }

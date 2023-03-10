@@ -2,16 +2,14 @@ package com.mcjty.lostedit.client;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.network.PacketCancel;
-import com.mcjty.lostedit.network.PacketConfirm;
-import com.mcjty.lostedit.project.ProjectClient;
+import com.mcjty.lostedit.servergui.PacketCancel;
+import com.mcjty.lostedit.servergui.PacketConfirm;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.ManualEntry;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.TextField;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 

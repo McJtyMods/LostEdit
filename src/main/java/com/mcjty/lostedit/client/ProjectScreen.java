@@ -3,20 +3,16 @@ package com.mcjty.lostedit.client;
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.project.ProjectClient;
-import com.mcjty.lostedit.setup.CommandHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Label;
-import mcjty.lib.gui.widgets.TextField;
-import mcjty.lib.network.PacketSendServerCommand;
-import mcjty.lib.typed.TypedMap;
 import mcjty.lib.varia.ClientTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 
 public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
 
-    private TextField fileWidget;
+    private Label projectNameWidget;
     private Label partsGlobalWidget;
     private Label partsProjectWidget;
 
@@ -28,20 +24,15 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
     public void init() {
         window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/project.gui"));
         super.init();
-        window.event("file", (source, params) -> {
-            network.sendToServer(new PacketSendServerCommand(LostEdit.MODID, CommandHandler.CMD_SETFILENAME, TypedMap.builder()
-                    .put(CommandHandler.PARAM_FILENAME, ((TextField)source).getText())
-                    .build()));
-        });
         ClientTools.enableKeyboardRepeat();
 
-        fileWidget = window.findChild("file");
+        projectNameWidget = window.findChild("project");
         partsGlobalWidget = window.findChild("partsGlobal");
         partsProjectWidget = window.findChild("partsProject");
     }
 
     public void setFilename(String filename) {
-        fileWidget.text(filename);
+        projectNameWidget.text(filename);
     }
 
     @Override
@@ -49,9 +40,9 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
         if (window == null) {
             return;
         }
-        fileWidget.text(ProjectClient.getFilename());
-        partsGlobalWidget.text("" + ProjectClient.getProjectInfo().partsGlobal());
-        partsProjectWidget.text("" + ProjectClient.getProjectInfo().partsProject().size());
+        projectNameWidget.text(ProjectClient.getProjectInfo().projectName());
+        partsGlobalWidget.text(String.valueOf(ProjectClient.getProjectInfo().partsGlobal()));
+        partsProjectWidget.text(String.valueOf(ProjectClient.getProjectInfo().partsProject().size()));
         drawWindow(poseStack);
     }
 

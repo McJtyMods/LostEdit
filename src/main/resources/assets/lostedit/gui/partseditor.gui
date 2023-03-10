@@ -27,10 +27,10 @@ window {
             horizalign('ALIGN_LEFT')
             desired(70, -1)
             bgfilled1(-7631989)
-            textfield('part') {
+            label('part', '<none>') {
                 tooltips('The name of the part we are editing')
                 channel('part')
-                desired(-1, 16)
+                desired(60, 16)
             }
             button('new','New') {
                 tooltips('Create a new part')

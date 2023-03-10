@@ -3,42 +3,40 @@ package com.mcjty.lostedit.project;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.JsonOps;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
+import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
+import mcjty.lostcities.worldgen.lost.regassets.data.PartRef;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+
+import static com.mcjty.lostedit.LostEdit.serverGui;
 
 public class Project {
 
-    private String filename;
-    private String partname;
+    private String projectName;
+    private String partName;
     private ProjectData data;
+    private int partListIndex = 0;
 
     public Project() {
-        this.data = new ProjectData(new ArrayList<>());
+        this.data = new ProjectData(new HashMap<>());
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
-    public void setPartname(String name) {
-        this.partname = name;
-    }
-
-    public String getPartname() {
-        return partname;
+    public String getProjectName() {
+        return projectName;
     }
 
     public void save(Player player) {
@@ -48,12 +46,12 @@ public class Project {
             String s = gson.toJson(json);
             // Write s to a file
             try {
-                BufferedWriter writer = new BufferedWriter(new FileWriter(filename + ".json"));
+                BufferedWriter writer = new BufferedWriter(new FileWriter(projectName + ".json"));
                 writer.write(s);
                 writer.close();
-                LostEdit.instance.manager.showMessage(player, "Saved project to '" + filename + ".json'");
+                serverGui().showMessage(player, "Saved project to '" + projectName + ".json'");
             } catch (IOException e) {
-                LostEdit.instance.manager.showMessage(player, "Error writing file '" + filename + ".json'!");
+                serverGui().showMessage(player, "Error writing file '" + projectName + ".json'!");
             }
         });
     }
@@ -61,7 +59,7 @@ public class Project {
     public void load(Player player) {
         // Read the file
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename + ".json"));
+            BufferedReader reader = new BufferedReader(new FileReader(projectName + ".json"));
             // Read the entire file into a string
             StringBuilder sb = new StringBuilder();
             String line;
@@ -75,17 +73,35 @@ public class Project {
             ProjectData.CODEC.parse(JsonOps.INSTANCE, gson.fromJson(sb.toString(), JsonElement.class)).result().ifPresent(pair -> {
                 // Set the data field to the new ProjectData object
                 data = pair;
-                LostEdit.instance.manager.showMessage(player, "Loaded project from '" + filename + ".json'");
+                serverGui().showMessage(player, "Loaded project from '" + projectName + ".json'");
             });
+            syncToClient(player);
         } catch (IOException e) {
-            LostEdit.instance.manager.showMessage(player, "Error reading file '" + filename + ".json'!");
+            serverGui().showMessage(player, "Error reading file '" + projectName + ".json'!");
         }
     }
 
     public void syncToClient(Player player) {
         int globalParts = AssetRegistries.PARTS.getNumAssets(player.level);
-        ProjectInfo info = new ProjectInfo(filename, globalParts, data.getParts().stream().map(partRef -> new PartInfo(partRef.getPart())).toList());
+        ProjectInfo info = new ProjectInfo(projectName, partName, globalParts, data.getParts().keySet().stream().map(PartInfo::new).toList(), partListIndex);
         LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
                 new PacketProjectInformationToClient(info));
+    }
+
+    public void newPart(Player player, String partName, int xSize, int zSize, int height) {
+        this.partName = partName;
+        data.addPart(partName, new BuildingPartRE(xSize, zSize, new ArrayList<>(height), Optional.empty(), Optional.empty(), Optional.empty()));
+        partListIndex++;
+        syncToClient(player);
+    }
+
+    public void deletePart(Player player, String part) {
+        data.removePart(part);
+        partListIndex++;
+        syncToClient(player);
+    }
+
+    public String getPartName() {
+        return partName;
     }
 }

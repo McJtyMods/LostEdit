@@ -1,51 +1,18 @@
 package com.mcjty.lostedit.project;
 
-import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.network.PacketAskConfirmation;
-import com.mcjty.lostedit.network.PacketCurrentNamesToClient;
-import com.mcjty.lostedit.network.PacketShowMessage;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.PacketDistributor;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ProjectManager {
 
     // All UUID's are player id's
-    public Map<UUID, Project> currentProjects = new HashMap<>();
-    public Map<UUID, String> filenames = new HashMap<>();
-
-    // Server side: action to perform when a confirmation is confirmed
-    private final Map<UUID, Runnable> serverActions = new HashMap<>();
-
-    // Server side: ask for confirmation
-    public void askConfirmation(Player player, String message, Runnable action) {
-        serverActions.put(player.getUUID(), action);
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketAskConfirmation(message));
-    }
-
-    // Server side: show message
-    public void showMessage(Player player, String message) {
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketShowMessage(message));
-    }
-
-    public void confirm(Player player) {
-        Runnable runnable = serverActions.get(player.getUUID());
-        if (runnable != null) {
-            runnable.run();
-            serverActions.remove(player.getUUID());
-        }
-    }
-
-    public void cancel(Player player) {
-        serverActions.remove(player.getUUID());
-    }
+    private final Map<UUID, Project> currentProjects = new HashMap<>();
 
     public boolean hasProject(Player player) {
         return currentProjects.containsKey(player.getUUID());
@@ -55,37 +22,30 @@ public class ProjectManager {
         return currentProjects.get(player.getUUID());
     }
 
-    public boolean hasFilename(Player player) {
-        return filenames.containsKey(player.getUUID()) && !Objects.equals(filenames.get(player.getUUID()), "");
+    private void executeOnProject(Player player, Consumer<Project> runnable) {
+        Project project = currentProjects.get(player.getUUID());
+        if (project != null) {
+            runnable.accept(project);
+        }
     }
 
-    public String getFilename(Player player) {
-        return filenames.get(player.getUUID());
+    private <T> T executeOnProjectWithResult(Player player, Function<Project, T> runnable, T defaultValue) {
+        Project project = currentProjects.get(player.getUUID());
+        if (project != null) {
+            return runnable.apply(project);
+        }
+        return defaultValue;
     }
 
-    // Server side, make new project
-    public void newProject(Player player) {
+    // Make new project
+    public void newProject(Player player, String projectName) {
         Project project = new Project();
-        project.setFilename(filenames.computeIfAbsent(player.getUUID(),
-                uuid -> uuid.toString().substring(0, 10)));
+        project.setProjectName(projectName);
         currentProjects.put(player.getUUID(), project);
         syncProjectToClient(player);
     }
 
-    // Server side, set filename
-    public void setFilename(Player player, String filename) {
-        String current = filenames.get(player.getUUID());
-        if (!Objects.equals(filename, current)) {
-            filenames.put(player.getUUID(), filename);
-            if (currentProjects.containsKey(player.getUUID())) {
-                currentProjects.get(player.getUUID()).setFilename(filename);
-            }
-            LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-                    new PacketCurrentNamesToClient(filename, getPartName(player)));
-        }
-    }
-
-    public void syncProjectToClient(Player player) {
+    private void syncProjectToClient(Player player) {
         Project project = currentProjects.get(player.getUUID());
         if (project != null) {
             project.syncToClient(player);
@@ -99,35 +59,22 @@ public class ProjectManager {
         }
     }
 
-    public void loadProject(Player player) {
-        newProject(player);
+    public void loadProject(Player player, String projectName) {
+        newProject(player, projectName);
         Project project = currentProjects.get(player.getUUID());
         project.load(player);
-        syncProjectToClient(player);
     }
 
-    public void newPart(Player player) {
-
+    public void newPart(Player player, String partName, int xSize, int zSize, int height) {
+        executeOnProject(player, project -> project.newPart(player, partName, xSize, zSize, height));
     }
 
-    public void deletePart(Player player) {
-
+    public void deletePart(Player player, String part) {
+        executeOnProject(player, project -> project.deletePart(player, part));
     }
 
-    public void setPartname(Player player, String name) {
-        Project project = getProject(player);
-        if (project != null) {
-            project.setPartname(name);
-            LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-                    new PacketCurrentNamesToClient(getFilename(player), getPartName(player)));
-        }
-    }
-
-    public String getPartName(Player player) {
-        Project project = getProject(player);
-        if (project != null) {
-            return project.getPartname();
-        }
-        return "";
+    @Nullable
+    public String getPart(Player player) {
+        return executeOnProjectWithResult(player, Project::getPartName, null);
     }
 }

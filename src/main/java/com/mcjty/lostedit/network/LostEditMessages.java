@@ -1,6 +1,7 @@
 package com.mcjty.lostedit.network;
 
 import com.mcjty.lostedit.LostEdit;
+import com.mcjty.lostedit.servergui.*;
 import mcjty.lib.network.*;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.resources.ResourceLocation;
@@ -30,11 +31,12 @@ public class LostEditMessages {
 
         INSTANCE = net;
 
-        net.registerMessage(id(), PacketCurrentNamesToClient.class, PacketCurrentNamesToClient::toBytes, PacketCurrentNamesToClient::new, PacketCurrentNamesToClient::handle);
         net.registerMessage(id(), PacketProjectInformationToClient.class, PacketProjectInformationToClient::toBytes, PacketProjectInformationToClient::new, PacketProjectInformationToClient::handle);
         net.registerMessage(id(), PacketAskConfirmation.class, PacketAskConfirmation::toBytes, PacketAskConfirmation::new, PacketAskConfirmation::handle);
         net.registerMessage(id(), PacketShowMessage.class, PacketShowMessage::toBytes, PacketShowMessage::new, PacketShowMessage::handle);
         net.registerMessage(id(), PacketConfirm.class, PacketConfirm::toBytes, PacketConfirm::new, PacketConfirm::handle);
+        net.registerMessage(id(), PacketConfirmParameters.class, PacketConfirmParameters::toBytes, PacketConfirmParameters::new, PacketConfirmParameters::handle);
+        net.registerMessage(id(), PacketAskParameters.class, PacketAskParameters::toBytes, PacketAskParameters::new, PacketAskParameters::handle);
         net.registerMessage(id(), PacketCancel.class, PacketCancel::toBytes, PacketCancel::new, PacketCancel::handle);
         net.registerMessage(id(), PacketOpenScreen.class, PacketOpenScreen::toBytes, PacketOpenScreen::new, PacketOpenScreen::handle);
         net.registerMessage(id(), PacketRequestDataFromServer.class, PacketRequestDataFromServer::toBytes, PacketRequestDataFromServer::new, new ChannelBoundHandler<>(net, PacketRequestDataFromServer::handle));
