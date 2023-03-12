@@ -7,8 +7,10 @@ import com.mcjty.lostedit.client.PartInfo;
 import com.mcjty.lostedit.client.ProjectInfo;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketProjectInformationToClient;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
+import mcjty.lostcities.worldgen.lost.cityassets.BuildingPart;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -16,6 +18,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.*;
 
@@ -96,18 +99,29 @@ public class Project {
                 new PacketProjectInformationToClient(info));
     }
 
-    public void newPart(Player player, String partName, int xSize, int zSize, int height) {
+    public void newPart(Player player, String partName, int xSize, int zSize, int height, @Nullable BuildingPartRE originalPart) {
         data.setPartName(partName);
-        ArrayList<List<String>> slices = new ArrayList<>(height);
-        for (int y = 0 ; y < height ; y++) {
-            List<String> slice = new ArrayList<>(zSize);
-            for (int x = 0 ; x < zSize ; x++) {
-                // Create a string with xSize spaces
-                slice.add(StringUtils.repeat(" ", xSize));
+        BuildingPartRE partRE;
+        if (originalPart != null) {
+            // Convert originalPart to json
+            DataResult<JsonElement> result = BuildingPartRE.CODEC.encodeStart(JsonOps.INSTANCE, originalPart);
+            // Convert json to BuildingPartRE
+            DataResult<BuildingPartRE> result2 = BuildingPartRE.CODEC.parse(JsonOps.INSTANCE, result.result().get());
+            partRE = result2.result().get();
+        } else {
+            List<List<String>> slices = new ArrayList<>(height);
+            for (int y = 0; y < height; y++) {
+                List<String> slice = new ArrayList<>(zSize);
+                for (int x = 0; x < zSize; x++) {
+                    // Create a string with xSize spaces
+                    slice.add(StringUtils.repeat(" ", xSize));
+                }
+                slices.add(slice);
             }
-            slices.add(slice);
+                partRE = new BuildingPartRE(xSize, zSize, slices, Optional.empty(), Optional.empty(), Optional.empty());
         }
-        data.addPart(partName, new BuildingPartRE(xSize, zSize, slices, Optional.empty(), Optional.empty(), Optional.empty()));
+
+        data.addPart(partName, partRE);
         partListIndex++;
         syncToClient(player);
     }
@@ -126,5 +140,17 @@ public class Project {
         ChunkPos pos = new ChunkPos(player.blockPosition());
         data.startEditing(player.level.dimension(), pos.x, pos.z, player.blockPosition().getY());
         syncToClient(player);
+    }
+
+    public void savePart(Player player) {
+        // @todo
+    }
+
+    public void loadPart(Player player) {
+
+    }
+
+    public boolean isEditing() {
+        return data.isEditing();
     }
 }

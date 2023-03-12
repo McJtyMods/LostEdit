@@ -5,6 +5,8 @@ window {
     cmdevent('clone','lostedit:clonepart')
     cmdevent('delete','lostedit:deletepart')
     cmdevent('edit','lostedit:editpart')
+    cmdevent('load','lostedit:loadpart')
+    cmdevent('save','lostedit:savepart')
 
     panel('','horizontal') {
         bgthickness(-1)
@@ -57,6 +59,16 @@ window {
             button('edit','Edit') {
                 tooltips('Edit the current part')
                 channel('edit')
+                desired(60, 14)
+            }
+            button('edit','Load') {
+                tooltips('Load the current part into the editing area')
+                channel('load')
+                desired(60, 14)
+            }
+            button('edit','Save') {
+                tooltips('Save the current part from the editing area')
+                channel('save')
                 desired(60, 14)
             }
             label('')

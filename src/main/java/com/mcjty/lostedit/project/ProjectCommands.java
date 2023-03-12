@@ -11,25 +11,16 @@ import java.util.List;
 import static com.mcjty.lostedit.LostEdit.manager;
 import static com.mcjty.lostedit.LostEdit.serverGui;
 import static com.mcjty.lostedit.servergui.ServerGui.parameter;
-import static com.mcjty.lostedit.servergui.ServerGui.parameterRO;
 
-public class CommandHandler {
+public class ProjectCommands {
 
     public static final String CMD_NEWPROJECT = "newproject";
     public static final String CMD_LOADPROJECT = "loadproject";
     public static final String CMD_SAVEPROJECT = "saveproject";
     public static final String CMD_SAVEDATA = "savedata";
     public static final String CMD_PARTSEDITOR = "partseditor";
-    public static final String CMD_NEWPART = "newpart";
-    public static final String CMD_CLONEPART = "clonepart";
-    public static final String CMD_DELETEPART = "deletepart";
-    public static final String CMD_EDITPART = "editpart";
 
     public static final Key<String> PARAM_PROJECTNAME = new Key<>("Name", Type.STRING);
-    public static final Key<String> PARAM_PARTNAME = new Key<>("Name", Type.STRING);
-    public static final Key<Integer> PARAM_HEIGHT = new Key<>("Height", Type.INTEGER);
-    public static final Key<Integer> PARAM_XSIZE = new Key<>("X Size", Type.INTEGER);
-    public static final Key<Integer> PARAM_ZSIZE = new Key<>("Z Size", Type.INTEGER);
 
     public static void registerCommands() {
         McJtyLib.registerCommand(LostEdit.MODID, CMD_NEWPROJECT, (player, arguments) -> {
@@ -61,7 +52,6 @@ public class CommandHandler {
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEPROJECT, (player, arguments) -> {
             // @todo make a backup first
             manager().saveProject(player);
-            serverGui().showMessage(player, "Project saved to '" + manager().getProject(player).getProjectName() + ".json'");
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEDATA, (player, arguments) -> {
@@ -70,45 +60,6 @@ public class CommandHandler {
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_PARTSEDITOR, (player, arguments) -> {
             serverGui().openScreen(player, PacketOpenScreen.Screen.PARTEDITOR);
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_NEWPART, (player, arguments) -> {
-            serverGui().askParameters(player, "Give parameters for part",
-                    List.of(parameter(PARAM_PARTNAME, ""),
-                            parameter(PARAM_HEIGHT, 6),
-                            parameterRO(PARAM_XSIZE, 16),
-                            parameterRO(PARAM_ZSIZE, 16)),
-                    params -> {
-                        String partName = params.get(PARAM_PARTNAME);
-                        if (partName == null || partName.isEmpty()) {
-                            serverGui().showMessage(player, "Partname cannot be empty!");
-                            return;
-                        }
-                        manager().newPart(player,
-                                partName,
-                                params.get(PARAM_XSIZE),
-                                params.get(PARAM_ZSIZE),
-                                params.get(PARAM_HEIGHT));
-                    });
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_CLONEPART, (player, arguments) -> {
-            serverGui().showMessage(player, "Not implemented yet!");
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_DELETEPART, (player, arguments) -> {
-            String part = manager().getPart(player);
-            if (part == null) {
-                serverGui().showMessage(player, "No part selected!");
-                return true;
-            }
-            serverGui().askConfirmation(player, "Are you sure you want to delete this part?", () -> {
-                manager().deletePart(player, part);
-            });
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_EDITPART, (player, arguments) -> {
-            manager().editPart(player);
             return true;
         });
     }

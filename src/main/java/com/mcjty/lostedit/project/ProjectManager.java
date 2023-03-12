@@ -1,5 +1,12 @@
 package com.mcjty.lostedit.project;
 
+import mcjty.lostcities.setup.CustomRegistries;
+import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
+import mcjty.lostcities.worldgen.lost.cityassets.BuildingPart;
+import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
@@ -8,6 +15,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import static com.mcjty.lostedit.LostEdit.serverGui;
 
 public class ProjectManager {
 
@@ -66,7 +75,7 @@ public class ProjectManager {
     }
 
     public void newPart(Player player, String partName, int xSize, int zSize, int height) {
-        executeOnProject(player, project -> project.newPart(player, partName, xSize, zSize, height));
+        executeOnProject(player, project -> project.newPart(player, partName, xSize, zSize, height, null));
     }
 
     public void deletePart(Player player, String part) {
@@ -80,5 +89,36 @@ public class ProjectManager {
 
     public void editPart(Player player) {
         executeOnProject(player, project -> project.editPart(player));
+    }
+
+    public void savePart(Player player) {
+        executeOnProject(player, project -> project.savePart(player));
+    }
+
+    public void loadPart(Player player) {
+        executeOnProject(player, project -> project.loadPart(player));
+    }
+
+    public void clonePart(Player player, String origPartName, String partName) {
+        BuildingPart origPart = AssetRegistries.PARTS.get(player.level, new ResourceLocation(origPartName));
+        if (origPart == null) {
+            serverGui().showMessage(player, "Part '" + origPartName + "' does not exist!");
+            return;
+        }
+        Registry<BuildingPartRE> registry = player.level.registryAccess().registryOrThrow(CustomRegistries.PART_REGISTRY_KEY);
+        BuildingPartRE buildingPartRE = registry.get(ResourceKey.create(CustomRegistries.PART_REGISTRY_KEY, new ResourceLocation(origPartName)));
+        if (buildingPartRE == null) {
+            serverGui().showMessage(player, "Part '" + origPartName + "' does not exist!");
+            return;
+        }
+
+        int xSize = origPart.getXSize();
+        int zSize = origPart.getZSize();
+        int height = origPart.getSliceCount();
+        executeOnProject(player, project -> project.newPart(player, partName, xSize, zSize, height, buildingPartRE));
+    }
+
+    public boolean isEditing(Player player) {
+        return executeOnProjectWithResult(player, Project::isEditing, false);
     }
 }
