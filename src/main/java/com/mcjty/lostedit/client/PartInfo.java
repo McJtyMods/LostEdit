@@ -5,8 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 public record PartInfo(int height) {
 
     public static PartInfo fromBytes(FriendlyByteBuf buf) {
-        int height = buf.readInt();
-        return new PartInfo(height);
+        return new PartInfo(buf.readInt());
     }
 
     public void toBytes(FriendlyByteBuf buf) {

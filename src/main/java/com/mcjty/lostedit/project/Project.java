@@ -14,12 +14,10 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.network.PacketDistributor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.mcjty.lostedit.LostEdit.serverGui;
 
@@ -100,7 +98,16 @@ public class Project {
 
     public void newPart(Player player, String partName, int xSize, int zSize, int height) {
         data.setPartName(partName);
-        data.addPart(partName, new BuildingPartRE(xSize, zSize, new ArrayList<>(height), Optional.empty(), Optional.empty(), Optional.empty()));
+        ArrayList<List<String>> slices = new ArrayList<>(height);
+        for (int y = 0 ; y < height ; y++) {
+            List<String> slice = new ArrayList<>(zSize);
+            for (int x = 0 ; x < zSize ; x++) {
+                // Create a string with xSize spaces
+                slice.add(StringUtils.repeat(" ", xSize));
+            }
+            slices.add(slice);
+        }
+        data.addPart(partName, new BuildingPartRE(xSize, zSize, slices, Optional.empty(), Optional.empty(), Optional.empty()));
         partListIndex++;
         syncToClient(player);
     }

@@ -61,6 +61,7 @@ public class CommandHandler {
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEPROJECT, (player, arguments) -> {
             // @todo make a backup first
             manager().saveProject(player);
+            serverGui().showMessage(player, "Project saved to '" + manager().getProject(player).getProjectName() + ".json'");
             return true;
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEDATA, (player, arguments) -> {
