@@ -38,6 +38,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
 
         Panel toplevel = Widgets.vertical(5, 2).filledRectThickness(2).filledBackground(0xff8899aa);
         toplevel.children(Widgets.label(this.message).desiredWidth(-1).desiredHeight(18));
+        Widget focus = null;
         for (ServerGui.Parameter parameter : input) {
             Key<?> key = parameter.key();
             Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
@@ -52,33 +53,53 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
                 builder.put((Key<Boolean>)key, value);
             } else if (key.type() == Type.STRING) {
                 String value = parameter.getValue(Type.STRING);
-                horizontal.children(new TextField().text(value).enabled(!parameter.readonly()).event((v) -> {
+                TextField field;
+                horizontal.children(field = new TextField().text(value).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<String>)key, v);
                 }));
+                if (focus == null) {
+                    focus = field;
+                }
                 builder.put((Key<String>)key, value);
             } else if (key.type() == Type.INTEGER) {
                 Integer value = parameter.getValue(Type.INTEGER);
-                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
+                TextField field;
+                horizontal.children(field = new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Integer>)key, Integer.parseInt(v));
                 }));
+                if (focus == null) {
+                    focus = field;
+                }
                 builder.put((Key<Integer>)key, value);
             } else if (key.type() == Type.DOUBLE) {
                 Double value = parameter.getValue(Type.DOUBLE);
-                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
+                TextField field;
+                horizontal.children(field = new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Double>)key, Double.parseDouble(v));
                 }));
+                if (focus == null) {
+                    focus = field;
+                }
                 builder.put((Key<Double>)key, value);
             } else if (key.type() == Type.FLOAT) {
                 Float value = parameter.getValue(Type.FLOAT);
-                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
+                TextField field;
+                horizontal.children(field = new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Float>)key, Float.parseFloat(v));
                 }));
+                if (focus == null) {
+                    focus = field;
+                }
                 builder.put((Key<Float>)key, value);
             } else if (key.type() == Type.LONG) {
                 Long value = parameter.getValue(Type.LONG);
-                horizontal.children(new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
+                TextField field;
+                horizontal.children(field = new TextField().text(value.toString()).enabled(!parameter.readonly()).event((v) -> {
                     builder.put((Key<Long>)key, Long.parseLong(v));
                 }));
+                if (focus == null) {
+                    focus = field;
+                }
                 builder.put((Key<Long>)key, value);
             } else {
                 throw new RuntimeException("Unknown type!");
@@ -99,6 +120,9 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
         toplevel.setBounds(new Rectangle(guiLeft, guiTop, xSize, ySize));
 
         window = new Window(this, toplevel);
+        if (focus != null) {
+            window.setTextFocus(focus);
+        }
     }
 
     @Override

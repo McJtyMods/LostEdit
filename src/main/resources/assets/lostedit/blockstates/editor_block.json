@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "lostedit:block/editor_block" }
+  }
+}
