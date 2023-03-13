@@ -3,18 +3,33 @@ package com.mcjty.lostedit.project;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.PartInfo;
 import com.mcjty.lostedit.client.ProjectInfo;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import mcjty.lostcities.editor.EditorInfo;
+import mcjty.lostcities.setup.Registration;
+import mcjty.lostcities.varia.ComponentFactory;
+import mcjty.lostcities.worldgen.IDimensionInfo;
+import mcjty.lostcities.worldgen.lost.BuildingInfo;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
 import mcjty.lostcities.worldgen.lost.cityassets.BuildingPart;
+import mcjty.lostcities.worldgen.lost.cityassets.CompiledPalette;
+import mcjty.lostcities.worldgen.lost.cityassets.Palette;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.StringUtils;
 
@@ -118,7 +133,7 @@ public class Project {
                 }
                 slices.add(slice);
             }
-                partRE = new BuildingPartRE(xSize, zSize, slices, Optional.empty(), Optional.empty(), Optional.empty());
+            partRE = new BuildingPartRE(xSize, zSize, slices, Optional.empty(), Optional.empty(), Optional.empty());
         }
 
         data.addPart(partName, partRE);
@@ -147,10 +162,70 @@ public class Project {
     }
 
     public void loadPart(Player player) {
-
+        // We can assume that we are editing here
+        BuildingPartRE partRE = data.getParts().get(getPartName());
+        if (getPartName().contains(":")) {
+            partRE.setRegistryName(new ResourceLocation(getPartName()));
+        } else {
+            partRE.setRegistryName(new ResourceLocation(LostEdit.MODID, getPartName()));
+        }
+        BuildingPart part = new BuildingPart(partRE);
+        ServerPlayer serverPlayer = (ServerPlayer) player;
+        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)serverPlayer.level);
+        if (dimInfo == null) {
+            // Report error
+            serverGui().showMessage(player, "Error: This is not a Lost City world!");
+            return;
+        }
+        BlockPos pos = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
+        startEditing(part, serverPlayer, pos, (ServerLevel)serverPlayer.level, dimInfo);
     }
 
     public boolean isEditing() {
         return data.isEditing();
+    }
+
+
+    public static void startEditing(BuildingPart part, ServerPlayer player, BlockPos start, ServerLevel level, IDimensionInfo dimInfo) {
+        BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
+        CompiledPalette palette = info.getCompiledPalette();
+        Palette partPalette = part.getLocalPalette(level);
+        Palette buildingPalette = info.getBuilding().getLocalPalette(level);
+        if (partPalette != null || buildingPalette != null) {
+            palette = new CompiledPalette(palette, partPalette, buildingPalette);
+        }
+
+        EditorInfo editorInfo = EditorInfo.createEditorInfo(player.getUUID(), part.getName(), start);
+
+        CompiledPalette finalPalette = palette;
+
+        player.level.getServer().doRunTask(new TickTask(3, () -> {
+            for (int y = 0; y < part.getSliceCount(); y++) {
+                for (int x = 0; x < part.getXSize(); x++) {
+                    for (int z = 0; z < part.getZSize(); z++) {
+                        BlockPos pos = new BlockPos(info.chunkX * 16 + x, start.getY() + y, info.chunkZ * 16 + z);
+                        Character character = part.getC(x, y, z);
+                        BlockState state = finalPalette.get(character);
+                        if (state != null) {
+                            level.setBlock(pos, state, Block.UPDATE_ALL);
+                        } else {
+                            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                        }
+                    }
+                }
+            }
+            for (int y = 0; y < part.getSliceCount(); y++) {
+                for (int x = 0; x < part.getXSize(); x++) {
+                    for (int z = 0; z < part.getZSize(); z++) {
+                        BlockPos pos = new BlockPos(info.chunkX * 16 + x, start.getY() + y, info.chunkZ * 16 + z);
+                        Character character = part.getC(x, y, z);
+                        if (finalPalette.get(character) != null) {
+                            BlockState state = level.getBlockState(pos);
+                            editorInfo.addPaletteEntry(character, state);
+                        }
+                    }
+                }
+            }
+        }));
     }
 }

@@ -33,16 +33,16 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
 
     @Override
     public void init() {
-        setWindowDimensions(350, input.size() * 20 + 20 + 20 + 20);
+        setWindowDimensions(300, input.size() * 19 + 18 + 18 + 18);
         super.init();
 
-        Panel toplevel = Widgets.vertical().filledRectThickness(2).filledBackground(0xff8899aa);
+        Panel toplevel = Widgets.vertical(5, 2).filledRectThickness(2).filledBackground(0xff8899aa);
         toplevel.children(Widgets.label(this.message).desiredWidth(-1).desiredHeight(18));
         for (ServerGui.Parameter parameter : input) {
             Key<?> key = parameter.key();
             Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
             toplevel.children(horizontal);
-            horizontal.children(Widgets.label(key.name() + ": "));
+            horizontal.children(Widgets.label(key.name() + ": ").desiredWidth(50));
             if (key.type() == Type.BOOLEAN) {
                 Boolean value = parameter.getValue(Type.BOOLEAN);
                 ToggleButton button = new ToggleButton();
@@ -86,11 +86,11 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
         }
         Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
         toplevel.children(horizontal);
-        Button cancelButton = new Button().text("Cancel").event(() -> {
+        Button cancelButton = new Button().desiredWidth(50).desiredHeight(16).text("Cancel").event(() -> {
             network.sendToServer(new PacketCancel());
             super.onClose();
         });
-        Button okButton = new Button().text("Ok").event(() -> {
+        Button okButton = new Button().desiredWidth(50).desiredHeight(16).text("Ok").event(() -> {
             network.sendToServer(new PacketConfirmParameters(builder.build()));
             super.onClose();
         });
