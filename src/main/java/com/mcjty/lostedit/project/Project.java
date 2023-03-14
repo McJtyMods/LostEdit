@@ -10,9 +10,7 @@ import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import mcjty.lostcities.editor.EditorInfo;
 import mcjty.lostcities.setup.Registration;
-import mcjty.lostcities.varia.ComponentFactory;
 import mcjty.lostcities.worldgen.IDimensionInfo;
 import mcjty.lostcities.worldgen.lost.BuildingInfo;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
@@ -186,7 +184,7 @@ public class Project {
     }
 
 
-    public static void startEditing(BuildingPart part, ServerPlayer player, BlockPos start, ServerLevel level, IDimensionInfo dimInfo) {
+    public void startEditing(BuildingPart part, ServerPlayer player, BlockPos start, ServerLevel level, IDimensionInfo dimInfo) {
         BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
         CompiledPalette palette = info.getCompiledPalette();
         Palette partPalette = part.getLocalPalette(level);
@@ -195,9 +193,15 @@ public class Project {
             palette = new CompiledPalette(palette, partPalette, buildingPalette);
         }
 
-        EditorInfo editorInfo = EditorInfo.createEditorInfo(player.getUUID(), part.getName(), start);
-
         CompiledPalette finalPalette = palette;
+        Map<String, ProjectData.PaletteEntry> paletteMap = data.getPaletteMap();
+        for (Character entry : finalPalette.getCharacters()) {
+
+            String name = entry.getValue().getBlock().getRegistryName().toString();
+            if (!paletteMap.containsKey(name)) {
+                paletteMap.put(name, new ProjectData.PaletteEntry(name, entry.getKey()));
+            }
+        }
 
         player.level.getServer().doRunTask(new TickTask(3, () -> {
             for (int y = 0; y < part.getSliceCount(); y++) {
@@ -206,26 +210,23 @@ public class Project {
                         BlockPos pos = new BlockPos(info.chunkX * 16 + x, start.getY() + y, info.chunkZ * 16 + z);
                         Character character = part.getC(x, y, z);
                         BlockState state = finalPalette.get(character);
-                        if (state != null) {
-                            level.setBlock(pos, state, Block.UPDATE_ALL);
-                        } else {
-                            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                        if (state == null) {
+                            state = Blocks.AIR.defaultBlockState();
                         }
-                    }
-                }
-            }
-            for (int y = 0; y < part.getSliceCount(); y++) {
-                for (int x = 0; x < part.getXSize(); x++) {
-                    for (int z = 0; z < part.getZSize(); z++) {
-                        BlockPos pos = new BlockPos(info.chunkX * 16 + x, start.getY() + y, info.chunkZ * 16 + z);
-                        Character character = part.getC(x, y, z);
-                        if (finalPalette.get(character) != null) {
-                            BlockState state = level.getBlockState(pos);
-                            editorInfo.addPaletteEntry(character, state);
-                        }
+                        level.setBlock(pos, state, Block.UPDATE_ALL);
+                        data.getPartData().put(pos, String.valueOf(character));
                     }
                 }
             }
         }));
+    }
+
+    public void addBlock(Player player, BlockPos pos, BlockState placedBlock) {
+        BlockPos start = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
+        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)player.level);
+        BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
+        CompiledPalette palette = info.getCompiledPalette();
+
+        data.getPartData().put(pos, String.valueOf(placedBlock.getBlock().getRegistryName()));
     }
 }

@@ -3,16 +3,25 @@ package com.mcjty.lostedit.project;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
-import mcjty.lostcities.worldgen.lost.regassets.data.PartRef;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 public class ProjectData {
+
+    public record PaletteEntry(String key, BlockState state, boolean local) {}
+
+    public static final Codec<PaletteEntry> PALETTE_ENTRY_CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.STRING.fieldOf("key").forGetter(l -> l.key),
+                    BlockState.CODEC.fieldOf("state").forGetter(l -> l.state),
+                    Codec.BOOL.fieldOf("local").forGetter(l -> l.local)
+            ).apply(instance, PaletteEntry::new));
 
     public static final Codec<ProjectData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
@@ -21,7 +30,9 @@ public class ProjectData {
                     Level.RESOURCE_KEY_CODEC.optionalFieldOf("editingAtDimension").forGetter(l -> Optional.ofNullable(l.editingAtDimension)),
                     Codec.INT.optionalFieldOf("editingAtChunkX").forGetter(l -> Optional.ofNullable(l.editingAtChunkX)),
                     Codec.INT.optionalFieldOf("editingAtChunkZ").forGetter(l -> Optional.ofNullable(l.editingAtChunkZ)),
-                    Codec.INT.optionalFieldOf("editingAtY").forGetter(l -> Optional.ofNullable(l.editingAtY))
+                    Codec.INT.optionalFieldOf("editingAtY").forGetter(l -> Optional.ofNullable(l.editingAtY)),
+                    Codec.unboundedMap(BlockPos.CODEC, Codec.STRING).fieldOf("palette").forGetter(l -> l.partData),
+                    Codec.unboundedMap(Codec.STRING, PALETTE_ENTRY_CODEC).fieldOf("paletteMap").forGetter(l -> l.paletteMap)
             ).apply(instance, ProjectData::new));
 
 
@@ -31,16 +42,22 @@ public class ProjectData {
     private Integer editingAtChunkX = null;
     private Integer editingAtChunkZ = null;
     private Integer editingAtY = null;
+    private Map<BlockPos, String> partData = null;
+    private Map<String, PaletteEntry> paletteMap = null;
 
     public ProjectData(Map<String, BuildingPartRE> parts, String partName,
                        Optional<ResourceKey<Level>> editingAtDimension,
-                       Optional<Integer> editingAtChunkX, Optional<Integer> editingAtChunkZ, Optional<Integer> editingAtY) {
+                       Optional<Integer> editingAtChunkX, Optional<Integer> editingAtChunkZ, Optional<Integer> editingAtY,
+                       Map<BlockPos, String> partData,
+                       Map<String, PaletteEntry> paletteMap) {
         this.parts = parts;
         this.partName = partName;
         this.editingAtDimension = editingAtDimension.orElse(null);
         this.editingAtChunkX = editingAtChunkX.orElse(null);
         this.editingAtChunkZ = editingAtChunkZ.orElse(null);
         this.editingAtY = editingAtY.orElse(null);
+        this.partData = partData;
+        this.paletteMap = paletteMap;
     }
 
     public ProjectData() {
@@ -66,6 +83,14 @@ public class ProjectData {
 
     public void setPartName(String partName) {
         this.partName = partName;
+    }
+
+    public Map<BlockPos, String> getPartData() {
+        return partData;
+    }
+
+    public Map<String, PaletteEntry> getPaletteMap() {
+        return paletteMap;
     }
 
     public void startEditing(ResourceKey<Level> dimension, int chunkX, int chunkZ, int y) {

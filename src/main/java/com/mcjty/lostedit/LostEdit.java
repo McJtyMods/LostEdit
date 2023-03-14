@@ -4,6 +4,7 @@ import com.mcjty.lostedit.client.rendering.EditorRenderer;
 import com.mcjty.lostedit.project.ProjectManager;
 import com.mcjty.lostedit.servergui.ServerGui;
 import com.mcjty.lostedit.setup.ClientSetup;
+import com.mcjty.lostedit.setup.ForgeEventHandlers;
 import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
 import mcjty.lib.varia.ClientTools;
@@ -34,6 +35,7 @@ public class LostEdit {
         Registration.register();
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(setup::init);
+        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientTools.onTextureStitch(bus, ClientSetup::onTextureStitch);
