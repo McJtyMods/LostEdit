@@ -11,6 +11,7 @@ import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import mcjty.lostcities.setup.Registration;
+import mcjty.lostcities.varia.Tools;
 import mcjty.lostcities.worldgen.IDimensionInfo;
 import mcjty.lostcities.worldgen.lost.BuildingInfo;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
@@ -18,6 +19,7 @@ import mcjty.lostcities.worldgen.lost.cityassets.BuildingPart;
 import mcjty.lostcities.worldgen.lost.cityassets.CompiledPalette;
 import mcjty.lostcities.worldgen.lost.cityassets.Palette;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
+import mcjty.lostcities.worldgen.lost.regassets.data.PaletteEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TickTask;
@@ -34,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.mcjty.lostedit.LostEdit.serverGui;
 
@@ -183,6 +186,23 @@ public class Project {
         return data.isEditing();
     }
 
+    public boolean isEditing(BlockPos pos) {
+        if (data.isEditing()) {
+            int height = data.getParts().get(getPartName()).getSlices().length;
+            if (pos.getY() < data.getEditingAtY() || pos.getY() >= data.getEditingAtY() + height) {
+                return false;
+            }
+            if (pos.getX() < data.getEditingAtChunkX() << 4 || pos.getX() >= (data.getEditingAtChunkX() + 1) << 4) {
+                return false;
+            }
+            if (pos.getZ() < data.getEditingAtChunkZ() << 4 || pos.getZ() >= (data.getEditingAtChunkZ() + 1) << 4) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
 
     public void startEditing(BuildingPart part, ServerPlayer player, BlockPos start, ServerLevel level, IDimensionInfo dimInfo) {
         BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
@@ -194,13 +214,14 @@ public class Project {
         }
 
         CompiledPalette finalPalette = palette;
-        Map<String, ProjectData.PaletteEntry> paletteMap = data.getPaletteMap();
+        Map<String, PaletteEntry> paletteMap = data.getPaletteMap();
         for (Character entry : finalPalette.getCharacters()) {
-
-            String name = entry.getValue().getBlock().getRegistryName().toString();
-            if (!paletteMap.containsKey(name)) {
-                paletteMap.put(name, new ProjectData.PaletteEntry(name, entry.getKey()));
-            }
+            BlockState state = finalPalette.get(entry);
+            boolean local = partPalette != null && partPalette.getPalette().get(entry) != null;
+            paletteMap.put(entry.toString(), new PaletteEntry(entry.toString(),
+                    Optional.of(Tools.stateToString(state)), Optional.empty(), Optional.empty(),
+                    Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
+                    Optional.empty(), Optional.empty()));
         }
 
         player.level.getServer().doRunTask(new TickTask(3, () -> {
@@ -221,12 +242,45 @@ public class Project {
         }));
     }
 
+    @Nullable
+    private String findUnusedChar() {
+        String possibleChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:'<>,.?/`~\"\\";
+        for (int i = 0 ; i < possibleChars.length() ; i++) {
+            char c = possibleChars.charAt(i);
+            if (!data.getPaletteMap().containsKey(String.valueOf(c))) {
+                return String.valueOf(c);
+            }
+        }
+        return null;
+    }
+
     public void addBlock(Player player, BlockPos pos, BlockState placedBlock) {
         BlockPos start = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
         IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)player.level);
         BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
         CompiledPalette palette = info.getCompiledPalette();
 
-        data.getPartData().put(pos, String.valueOf(placedBlock.getBlock().getRegistryName()));
+        AtomicReference<String> character = new AtomicReference<>("");
+        data.getPaletteMap().entrySet().stream().filter(entry -> Tools.stringToState(entry.getValue().getBlock()).equals(placedBlock)).findFirst().ifPresent(entry -> {
+            character.set(entry.getKey());
+        });
+        if (character.get().isEmpty()) {
+            // Not found
+            String unusedChar = findUnusedChar();
+            if (unusedChar != null) {
+                character.set(unusedChar);
+            } else {
+                // The palette is full
+                // @todo warning?
+            }
+        }
+
+        if (!character.get().isEmpty()) {
+            data.getPartData().put(pos, character.get());
+        }
+    }
+
+    public void removeBlock(Player player, BlockPos pos) {
+
     }
 }

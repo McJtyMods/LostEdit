@@ -18,8 +18,6 @@ public class PartCommands {
     public static final String CMD_CLONEPART = "clonepart";
     public static final String CMD_DELETEPART = "deletepart";
     public static final String CMD_EDITPART = "editpart";
-    public static final String CMD_SAVEPART = "savepart";
-    public static final String CMD_LOADPART = "loadpart";
 
     public static final Key<String> PARAM_PARTNAME_ORIG = new Key<>("Original", Type.STRING);
     public static final Key<String> PARAM_PARTNAME = new Key<>("Name", Type.STRING);
@@ -90,34 +88,8 @@ public class PartCommands {
         });
         McJtyLib.registerCommand(LostEdit.MODID, CMD_EDITPART, (player, arguments) -> {
             manager().editPart(player);
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_SAVEPART, (player, arguments) -> {
-            String part = manager().getPart(player);
-            if (part == null) {
-                serverGui().showMessage(player, "No part selected!");
-                return true;
-            }
-            if (!manager().isEditing(player)) {
-                serverGui().showMessage(player, "You are not editing!");
-                return true;
-            }
-            manager().savePart(player);
-            return true;
-        });
-        McJtyLib.registerCommand(LostEdit.MODID, CMD_LOADPART, (player, arguments) -> {
-            String part = manager().getPart(player);
-            if (part == null) {
-                serverGui().showMessage(player, "No part selected!");
-                return true;
-            }
-            if (!manager().isEditing(player)) {
-                serverGui().showMessage(player, "You are not editing!");
-                return true;
-            }
             manager().loadPart(player);
             return true;
         });
     }
-
 }

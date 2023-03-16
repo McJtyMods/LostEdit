@@ -39,7 +39,6 @@ public class LostEdit {
 
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             ClientTools.onTextureStitch(bus, ClientSetup::onTextureStitch);
-            bus.addListener(ClientSetup::modelInit);
             bus.addListener(ClientSetup::initClient);
             MinecraftForge.EVENT_BUS.addListener(EditorRenderer::render);
         });

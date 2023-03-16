@@ -4,10 +4,12 @@ import mcjty.lostcities.setup.CustomRegistries;
 import mcjty.lostcities.worldgen.lost.cityassets.AssetRegistries;
 import mcjty.lostcities.worldgen.lost.cityassets.BuildingPart;
 import mcjty.lostcities.worldgen.lost.regassets.BuildingPartRE;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -118,7 +120,7 @@ public class ProjectManager {
         executeOnProject(player, project -> project.newPart(player, partName, xSize, zSize, height, buildingPartRE));
     }
 
-    public boolean isEditing(Player player) {
-        return executeOnProjectWithResult(player, Project::isEditing, false);
+    public boolean isEditing(Player player, BlockPos pos) {
+        return executeOnProjectWithResult(player, project -> project.isEditing(pos), false);
     }
 }

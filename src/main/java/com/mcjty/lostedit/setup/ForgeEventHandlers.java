@@ -16,10 +16,21 @@ public class ForgeEventHandlers {
             if (player.level.isClientSide) {
                 return;
             }
-            if (manager().isEditing(player)) {
+            if (manager().isEditing(player, event.getPos())) {
                 Project project = manager().getProject(player);
                 project.addBlock(player, event.getPos(), event.getPlacedBlock());
             }
+        }
+    }
+
+    public void onDestroyBlock(BlockEvent.BreakEvent event) {
+        Player player = event.getPlayer();
+        if (player.level.isClientSide) {
+            return;
+        }
+        if (manager().isEditing(player, event.getPos())) {
+            Project project = manager().getProject(player);
+            project.removeBlock(player, event.getPos());
         }
     }
 }
