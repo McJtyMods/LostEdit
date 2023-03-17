@@ -53,6 +53,8 @@ public class ProjectData {
 
     public ProjectData() {
         this.parts = new HashMap<>();
+        this.partData = new HashMap<>();
+        this.paletteMap = new HashMap<>();
         this.partName = "";
     }
 
