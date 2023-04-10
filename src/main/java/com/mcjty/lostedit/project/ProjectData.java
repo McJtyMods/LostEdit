@@ -8,11 +8,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ProjectData {
+
+    record PosToPalette(String palette, BlockPos pos) {
+    }
+
+    public static final Codec<PosToPalette> POS_TO_PALETTE_CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.STRING.fieldOf("palette").forGetter(PosToPalette::palette),
+                    BlockPos.CODEC.fieldOf("pos").forGetter(PosToPalette::pos)
+            ).apply(instance, PosToPalette::new));
 
     public static final Codec<ProjectData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
@@ -22,10 +29,9 @@ public class ProjectData {
                     Codec.INT.optionalFieldOf("editingAtChunkX").forGetter(l -> Optional.ofNullable(l.editingAtChunkX)),
                     Codec.INT.optionalFieldOf("editingAtChunkZ").forGetter(l -> Optional.ofNullable(l.editingAtChunkZ)),
                     Codec.INT.optionalFieldOf("editingAtY").forGetter(l -> Optional.ofNullable(l.editingAtY)),
-                    Codec.unboundedMap(BlockPos.CODEC, Codec.STRING).fieldOf("palette").forGetter(l -> l.partData),
+                    Codec.list(POS_TO_PALETTE_CODEC).fieldOf("palette").forGetter(ProjectData::getConvertedPartData),
                     Codec.unboundedMap(Codec.STRING, PaletteEntry.CODEC).fieldOf("paletteMap").forGetter(l -> l.paletteMap)
             ).apply(instance, ProjectData::new));
-
 
     private final Map<String, BuildingPartRE> parts;
     private String partName = "";   // The part that is currently being edited
@@ -39,7 +45,7 @@ public class ProjectData {
     public ProjectData(Map<String, BuildingPartRE> parts, String partName,
                        Optional<ResourceKey<Level>> editingAtDimension,
                        Optional<Integer> editingAtChunkX, Optional<Integer> editingAtChunkZ, Optional<Integer> editingAtY,
-                       Map<BlockPos, String> partData,
+                       List<PosToPalette> partData,
                        Map<String, PaletteEntry> paletteMap) {
         this.parts = parts;
         this.partName = partName;
@@ -47,7 +53,10 @@ public class ProjectData {
         this.editingAtChunkX = editingAtChunkX.orElse(null);
         this.editingAtChunkZ = editingAtChunkZ.orElse(null);
         this.editingAtY = editingAtY.orElse(null);
-        this.partData = partData;
+        this.partData = new HashMap<>();
+        for (PosToPalette posToPalette : partData) {
+            this.partData.put(posToPalette.pos(), posToPalette.palette());
+        }
         this.paletteMap = paletteMap;
     }
 
@@ -81,6 +90,15 @@ public class ProjectData {
     public Map<BlockPos, String> getPartData() {
         return partData;
     }
+
+    private List<PosToPalette> getConvertedPartData() {
+        List<PosToPalette> list = new ArrayList<>();
+        for (var entry : partData.entrySet()) {
+            list.add(new PosToPalette(entry.getValue(), entry.getKey()));
+        }
+        return list;
+    }
+
 
     public Map<String, PaletteEntry> getPaletteMap() {
         return paletteMap;

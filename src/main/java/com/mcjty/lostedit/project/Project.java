@@ -59,7 +59,10 @@ public class Project {
     }
 
     public void save(Player player) {
-        ProjectData.CODEC.encodeStart(JsonOps.INSTANCE, data).result().ifPresent(json -> {
+        DataResult<JsonElement> result = ProjectData.CODEC.encodeStart(JsonOps.INSTANCE, data);
+        result.get().ifRight(error -> {
+            serverGui().showMessage(player, "Error saving project: " + error.message());
+        }).ifLeft(json -> {
             // Use Gson to convert the json to a string
             Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
             String s = gson.toJson(json);
