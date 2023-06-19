@@ -102,12 +102,12 @@ public class ProjectManager {
     }
 
     public void clonePart(Player player, String origPartName, String partName) {
-        BuildingPart origPart = AssetRegistries.PARTS.get(player.level, new ResourceLocation(origPartName));
+        BuildingPart origPart = AssetRegistries.PARTS.get(player.level(), new ResourceLocation(origPartName));
         if (origPart == null) {
             serverGui().showMessage(player, "Part '" + origPartName + "' does not exist!");
             return;
         }
-        Registry<BuildingPartRE> registry = player.level.registryAccess().registryOrThrow(CustomRegistries.PART_REGISTRY_KEY);
+        Registry<BuildingPartRE> registry = player.level().registryAccess().registryOrThrow(CustomRegistries.PART_REGISTRY_KEY);
         BuildingPartRE buildingPartRE = registry.get(ResourceKey.create(CustomRegistries.PART_REGISTRY_KEY, new ResourceLocation(origPartName)));
         if (buildingPartRE == null) {
             serverGui().showMessage(player, "Part '" + origPartName + "' does not exist!");

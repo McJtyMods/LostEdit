@@ -4,13 +4,13 @@ import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.servergui.PacketCancel;
 import com.mcjty.lostedit.servergui.PacketConfirm;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.ManualEntry;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 public class AskConfirmation extends GuiItemScreen {
@@ -44,7 +44,7 @@ public class AskConfirmation extends GuiItemScreen {
     }
 
     @Override
-    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
         drawWindow(poseStack);
     }
 

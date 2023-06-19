@@ -2,13 +2,13 @@ package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.ManualEntry;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.widgets.Button;
 import mcjty.lib.gui.widgets.Label;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 public class ShowMessage extends GuiItemScreen {
@@ -31,7 +31,7 @@ public class ShowMessage extends GuiItemScreen {
     }
 
     @Override
-    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
         drawWindow(poseStack);
     }
 

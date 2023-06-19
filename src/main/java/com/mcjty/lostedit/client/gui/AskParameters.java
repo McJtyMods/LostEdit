@@ -4,7 +4,6 @@ import com.mcjty.lostedit.network.LostEditMessages;
 import com.mcjty.lostedit.servergui.PacketCancel;
 import com.mcjty.lostedit.servergui.PacketConfirmParameters;
 import com.mcjty.lostedit.servergui.ServerGui;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.Window;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Button;
@@ -15,6 +14,7 @@ import mcjty.lib.typed.Key;
 import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.awt.*;
 import java.util.List;
@@ -132,7 +132,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
         drawWindow(poseStack);
     }
 

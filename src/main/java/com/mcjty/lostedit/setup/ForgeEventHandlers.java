@@ -13,7 +13,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onPlaceBlock(BlockEvent.EntityPlaceEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (player.level.isClientSide) {
+            if (player.level().isClientSide) {
                 return;
             }
             if (manager().isEditing(player, event.getPos())) {
@@ -25,7 +25,7 @@ public class ForgeEventHandlers {
 
     public void onDestroyBlock(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
-        if (player.level.isClientSide) {
+        if (player.level().isClientSide) {
             return;
         }
         if (manager().isEditing(player, event.getPos())) {

@@ -3,14 +3,13 @@ package com.mcjty.lostedit.client.gui;
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.ProjectInfoHolder;
 import com.mcjty.lostedit.network.LostEditMessages;
-import com.mcjty.lostedit.client.PartInfo;
-import com.mojang.blaze3d.vertex.PoseStack;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.WidgetList;
 import mcjty.lib.gui.widgets.Widgets;
 import mcjty.lib.varia.ClientTools;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
@@ -45,7 +44,7 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    protected void renderInternal(PoseStack poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
         partWidget.text(ProjectInfoHolder.getProjectInfo().partName());
         populateList();
         drawWindow(poseStack);

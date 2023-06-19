@@ -104,7 +104,7 @@ public class Project {
     }
 
     public void syncToClient(Player player) {
-        int globalParts = AssetRegistries.PARTS.getNumAssets(player.level);
+        int globalParts = AssetRegistries.PARTS.getNumAssets(player.level());
         Map<String, PartInfo> parts = new HashMap<>();
         for (Map.Entry<String, BuildingPartRE> entry : data.getParts().entrySet()) {
             BuildingPartRE part = entry.getValue();
@@ -157,7 +157,7 @@ public class Project {
 
     public void editPart(Player player) {
         ChunkPos pos = new ChunkPos(player.blockPosition());
-        data.startEditing(player.level.dimension(), pos.x, pos.z, player.blockPosition().getY());
+        data.startEditing(player.level().dimension(), pos.x, pos.z, player.blockPosition().getY());
         syncToClient(player);
     }
 
@@ -175,14 +175,14 @@ public class Project {
         }
         BuildingPart part = new BuildingPart(partRE);
         ServerPlayer serverPlayer = (ServerPlayer) player;
-        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)serverPlayer.level);
+        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)serverPlayer.level());
         if (dimInfo == null) {
             // Report error
             serverGui().showMessage(player, "Error: This is not a Lost City world!");
             return;
         }
         BlockPos pos = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
-        startEditing(part, serverPlayer, pos, (ServerLevel)serverPlayer.level, dimInfo);
+        startEditing(part, serverPlayer, pos, (ServerLevel)serverPlayer.level(), dimInfo);
     }
 
     public boolean isEditing() {
@@ -227,7 +227,7 @@ public class Project {
                     Optional.empty(), Optional.empty()));
         }
 
-        player.level.getServer().doRunTask(new TickTask(3, () -> {
+        player.level().getServer().doRunTask(new TickTask(3, () -> {
             for (int y = 0; y < part.getSliceCount(); y++) {
                 for (int x = 0; x < part.getXSize(); x++) {
                     for (int z = 0; z < part.getZSize(); z++) {
@@ -259,7 +259,7 @@ public class Project {
 
     public void addBlock(Player player, BlockPos pos, BlockState placedBlock) {
         BlockPos start = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
-        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)player.level);
+        IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)player.level());
         BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
         CompiledPalette palette = info.getCompiledPalette();
 
