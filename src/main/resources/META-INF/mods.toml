@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[40,)"
+loaderVersion="[47,)"
 license="MIT License https://github.com/McJty/YouTubeModding14/blob/1.16/LICENCE"
 [[mods]]
 modId="lostedit"
@@ -17,7 +17,7 @@ Making Lost Cities even more ruined
 [[dependencies.lostedit]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.2,)"
+    versionRange="[1.20,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.lostedit]]
