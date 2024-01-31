@@ -11,6 +11,7 @@ import com.mcjty.lostedit.network.PacketProjectInformationToClient;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import mcjty.lostcities.setup.Registration;
+import mcjty.lostcities.varia.ChunkCoord;
 import mcjty.lostcities.varia.Tools;
 import mcjty.lostcities.worldgen.IDimensionInfo;
 import mcjty.lostcities.worldgen.lost.BuildingInfo;
@@ -208,7 +209,8 @@ public class Project {
 
 
     public void startEditing(BuildingPart part, ServerPlayer player, BlockPos start, ServerLevel level, IDimensionInfo dimInfo) {
-        BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
+        ChunkCoord coord = new ChunkCoord(dimInfo.getType(), start.getX() >> 4, start.getZ() >> 4);
+        BuildingInfo info = BuildingInfo.getBuildingInfo(coord, dimInfo);
         CompiledPalette palette = info.getCompiledPalette();
         Palette partPalette = part.getLocalPalette(level);
         Palette buildingPalette = info.getBuilding().getLocalPalette(level);
@@ -260,7 +262,8 @@ public class Project {
     public void addBlock(Player player, BlockPos pos, BlockState placedBlock) {
         BlockPos start = new BlockPos(data.getEditingAtChunkX() << 4, data.getEditingAtY(), data.getEditingAtChunkZ() << 4);
         IDimensionInfo dimInfo = Registration.LOSTCITY_FEATURE.get().getDimensionInfo((ServerLevel)player.level());
-        BuildingInfo info = BuildingInfo.getBuildingInfo(start.getX() >> 4, start.getZ() >> 4, dimInfo);
+        ChunkCoord coord = new ChunkCoord(dimInfo.getType(), start.getX() >> 4, start.getZ() >> 4);
+        BuildingInfo info = BuildingInfo.getBuildingInfo(coord, dimInfo);
         CompiledPalette palette = info.getCompiledPalette();
 
         AtomicReference<String> character = new AtomicReference<>("");
