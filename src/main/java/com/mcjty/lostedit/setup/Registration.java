@@ -3,6 +3,8 @@ package com.mcjty.lostedit.setup;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.items.EditorWand;
+import mcjty.lib.setup.DeferredItem;
+import mcjty.lib.setup.DeferredItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -21,10 +23,10 @@ import static com.mcjty.lostedit.LostEdit.tab;
 
 public class Registration {
 
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
+    public static final DeferredItems ITEMS = DeferredItems.create(MODID);
     public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
-    public static final RegistryObject<EditorWand> EDITORWAND = ITEMS.register("editorwand", tab(() -> new EditorWand(createStandardProperties())));
+    public static final DeferredItem<EditorWand> EDITORWAND = ITEMS.register("editorwand", tab(() -> new EditorWand(createStandardProperties())));
 
     public static void register() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

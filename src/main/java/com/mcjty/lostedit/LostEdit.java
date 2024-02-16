@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.function.Supplier;
 
@@ -31,17 +32,19 @@ public class LostEdit {
     private final ServerGui serverGui = new ServerGui();
 
     public LostEdit() {
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        Dist dist = FMLEnvironment.dist;
+
         instance = this;
         Registration.register();
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(setup::init);
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+        if (dist.isClient()) {
             ClientTools.onTextureStitch(bus, ClientSetup::onTextureStitch);
             bus.addListener(ClientSetup::initClient);
             MinecraftForge.EVENT_BUS.addListener(EditorRenderer::render);
-        });
+        }
     }
 
     public static ProjectManager manager() {
