@@ -7,7 +7,6 @@ import com.mcjty.lostedit.setup.ClientSetup;
 import com.mcjty.lostedit.setup.ForgeEventHandlers;
 import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
-import mcjty.lib.varia.ClientTools;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,7 +39,6 @@ public class LostEdit {
         MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
 
         if (dist.isClient()) {
-            ClientTools.onTextureStitch(bus, ClientSetup::onTextureStitch);
             bus.addListener(ClientSetup::initClient);
             MinecraftForge.EVENT_BUS.addListener(EditorRenderer::render);
         }
