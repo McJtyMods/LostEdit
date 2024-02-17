@@ -12,9 +12,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,10 +26,9 @@ public class Registration {
 
     public static final DeferredItem<EditorWand> EDITORWAND = ITEMS.register("editorwand", tab(() -> new EditorWand(createStandardProperties())));
 
-    public static void register() {
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    public static void register(IEventBus bus) {
         ITEMS.register(bus);
-        TABS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        TABS.register(bus);
     }
 
     @NotNull
