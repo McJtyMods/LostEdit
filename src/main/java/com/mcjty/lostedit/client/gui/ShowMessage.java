@@ -1,7 +1,6 @@
 package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
-import com.mcjty.lostedit.network.LostEditMessages;
 import mcjty.lib.gui.GuiItemScreen;
 import mcjty.lib.gui.ManualEntry;
 import mcjty.lib.gui.Window;
@@ -16,13 +15,13 @@ public class ShowMessage extends GuiItemScreen {
     private final String message;
 
     public ShowMessage(String message) {
-        super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
+        super(0, 0, ManualEntry.EMPTY);
         this.message = message;
     }
 
     @Override
     public void init() {
-        window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/showmessage.gui"));
+        window = new Window(this, new ResourceLocation(LostEdit.MODID, "gui/showmessage.gui"));
         super.init();
         ((Label)window.findChild("message")).text(message);
         ((Button)window.findChild("ok")).event(() -> {

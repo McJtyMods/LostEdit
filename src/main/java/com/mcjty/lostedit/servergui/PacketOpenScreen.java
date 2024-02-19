@@ -1,15 +1,18 @@
 package com.mcjty.lostedit.servergui;
 
+import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.PartsEditorScreen;
 import com.mcjty.lostedit.client.gui.ProjectScreen;
+import mcjty.lib.network.CustomPacketPayload;
+import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Supplier;
+public record PacketOpenScreen(Screen screen) implements CustomPacketPayload {
 
-public class PacketOpenScreen {
+    public static final ResourceLocation ID = new ResourceLocation(LostEdit.MODID, "openscreen");
 
-    public static enum Screen {
+    public enum Screen {
         PROJECT(() -> ProjectScreen.open()),
         PARTEDITOR(() -> PartsEditorScreen.open());
 
@@ -24,23 +27,22 @@ public class PacketOpenScreen {
         }
     }
 
-    private final Screen screen;
-
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void write(FriendlyByteBuf buf) {
         buf.writeShort(screen.ordinal());
     }
 
-    public PacketOpenScreen(FriendlyByteBuf buf) {
-        screen = Screen.values()[buf.readShort()];
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
-    public PacketOpenScreen(Screen screen) {
-        this.screen = screen;
+    public static PacketOpenScreen create(FriendlyByteBuf buf) {
+        Screen screen = Screen.values()[buf.readShort()];
+        return new PacketOpenScreen(screen);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> screen.getCode().run());
-        ctx.setPacketHandled(true);
+    public void handle(PlayPayloadContext ctx) {
+        ctx.workHandler().submitAsync(() -> screen.getCode().run());
     }
 }

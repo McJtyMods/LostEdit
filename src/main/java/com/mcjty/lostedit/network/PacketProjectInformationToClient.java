@@ -1,33 +1,35 @@
 package com.mcjty.lostedit.network;
 
-import com.mcjty.lostedit.client.ProjectInfoHolder;
+import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.ProjectInfo;
+import com.mcjty.lostedit.client.ProjectInfoHolder;
+import mcjty.lib.network.CustomPacketPayload;
+import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Supplier;
+public record PacketProjectInformationToClient(ProjectInfo info) implements CustomPacketPayload {
 
-public class PacketProjectInformationToClient {
+    public static final ResourceLocation ID = new ResourceLocation(LostEdit.MODID, "projectinfo");
 
-    private final ProjectInfo info;
-
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void write(FriendlyByteBuf buf) {
         info.toBytes(buf);
     }
 
-    public PacketProjectInformationToClient(FriendlyByteBuf buf) {
-        info = ProjectInfo.fromBytes(buf);
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
-    public PacketProjectInformationToClient(ProjectInfo info) {
-        this.info = info;
+    public static PacketProjectInformationToClient create(FriendlyByteBuf buf) {
+        ProjectInfo info = ProjectInfo.fromBytes(buf);
+        return new PacketProjectInformationToClient(info);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
+    public void handle(PlayPayloadContext ctx) {
+        ctx.workHandler().submitAsync(() -> {
             ProjectInfoHolder.setProjectInfo(info);
         });
-        ctx.setPacketHandled(true);
     }
 }

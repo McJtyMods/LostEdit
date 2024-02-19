@@ -26,7 +26,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
     private final TypedMap.Builder builder = TypedMap.builder();
 
     public AskParameters(String message, List<ServerGui.Parameter> input) {
-        super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
+        super(0, 0, ManualEntry.EMPTY);
         this.message = message;
         this.input = input;
     }
@@ -108,11 +108,11 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
         Panel horizontal = Widgets.horizontal().desiredWidth(-1).desiredHeight(18);
         toplevel.children(horizontal);
         Button cancelButton = new Button().desiredWidth(50).desiredHeight(16).text("Cancel").event(() -> {
-            network.sendToServer(new PacketCancel());
+            LostEditMessages.sendToServer(new PacketCancel());
             super.onClose();
         });
         Button okButton = new Button().desiredWidth(50).desiredHeight(16).text("Ok").event(() -> {
-            network.sendToServer(new PacketConfirmParameters(builder.build()));
+            LostEditMessages.sendToServer(new PacketConfirmParameters(builder.build()));
             super.onClose();
         });
         horizontal.children(okButton, cancelButton);
@@ -127,7 +127,7 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
 
     @Override
     public void onClose() {
-        network.sendToServer(new PacketCancel());
+        LostEditMessages.sendToServer(new PacketCancel());
         super.onClose();
     }
 

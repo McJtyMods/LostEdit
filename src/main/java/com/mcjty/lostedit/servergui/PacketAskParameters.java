@@ -1,20 +1,22 @@
 package com.mcjty.lostedit.servergui;
 
+import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.AskParameters;
+import mcjty.lib.network.CustomPacketPayload;
+import mcjty.lib.network.PlayPayloadContext;
 import mcjty.lib.network.TypedMapTools;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
-public class PacketAskParameters {
+public record PacketAskParameters(String message, List<ServerGui.Parameter> input) implements CustomPacketPayload {
 
-    private final String message;
-    private final List<ServerGui.Parameter> input;
+    public static final ResourceLocation ID = new ResourceLocation(LostEdit.MODID, "askparameters");
 
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void write(FriendlyByteBuf buf) {
         buf.writeUtf(message);
         buf.writeShort(input.size());
         for (ServerGui.Parameter parameter : input) {
@@ -23,24 +25,24 @@ public class PacketAskParameters {
         }
     }
 
-    public PacketAskParameters(FriendlyByteBuf buf) {
-        message = buf.readUtf(32767);
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
+
+    public static PacketAskParameters create(FriendlyByteBuf buf) {
+        String message = buf.readUtf(32767);
         int size = buf.readShort();
-        input = new ArrayList<>(size);
+        List<ServerGui.Parameter> input = new ArrayList<>(size);
         for (int i = 0 ; i < size ; i++) {
             boolean readonly = buf.readBoolean();
             TypedMapTools.readArgument(buf, (key, o) -> input.add(new ServerGui.Parameter(key, o, readonly)));
         }
+        return new PacketAskParameters(message, input);
     }
 
-    public PacketAskParameters(String message, List<ServerGui.Parameter> input) {
-        this.message = message;
-        this.input = input;
-    }
-
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
+    public void handle(PlayPayloadContext ctx) {
+        ctx.workHandler().submitAsync(() -> {
             try {
                 AskParameters.open(message, input);
             } catch (Exception e) {
@@ -48,6 +50,5 @@ public class PacketAskParameters {
                 throw new RuntimeException(e);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

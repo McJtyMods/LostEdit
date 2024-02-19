@@ -1,33 +1,40 @@
 package com.mcjty.lostedit.servergui;
 
+import com.mcjty.lostedit.LostEdit;
+import mcjty.lib.network.CustomPacketPayload;
+import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraft.resources.ResourceLocation;
 
 import static com.mcjty.lostedit.LostEdit.serverGui;
 
-public class PacketConfirm {
+public record PacketConfirm() implements CustomPacketPayload {
 
-    public void toBytes(FriendlyByteBuf buf) {
+    public static final ResourceLocation ID = new ResourceLocation(LostEdit.MODID, "confirm");
+
+    @Override
+    public void write(FriendlyByteBuf buf) {
     }
 
-    public PacketConfirm(FriendlyByteBuf buf) {
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
-    public PacketConfirm() {
+    public static PacketConfirm create(FriendlyByteBuf buf) {
+        return new PacketConfirm();
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
-            try {
-                serverGui().confirm(ctx.getSender());
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
+    public void handle(PlayPayloadContext ctx) {
+        ctx.workHandler().submitAsync(() -> {
+            ctx.player().ifPresent(player -> {
+                try {
+                    serverGui().confirm(player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            });
         });
-        ctx.setPacketHandled(true);
     }
 }

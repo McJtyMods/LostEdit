@@ -115,8 +115,7 @@ public class Project {
                 partListIndex,
                 data.getEditingAtDimension(),
                 data.getEditingAtChunkX(), data.getEditingAtChunkZ(), data.getEditingAtY());
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketProjectInformationToClient(info));
+        LostEditMessages.sendToPlayer(new PacketProjectInformationToClient(info), player);
     }
 
     public void newPart(Player player, String partName, int xSize, int zSize, int height, @Nullable BuildingPartRE originalPart) {

@@ -7,7 +7,6 @@ import mcjty.lib.typed.TypedMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.PacketDistributor;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,15 +37,13 @@ public class ServerGui {
     // Ask for parameters before doing some server code
     public void askParameters(Player player, String message, List<Parameter> input, Consumer<TypedMap> action) {
         serverActionsWithParameters.put(player.getUUID(), action);
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketAskParameters(message, input));
+        LostEditMessages.sendToPlayer(new PacketAskParameters(message, input), player);
     }
 
     // Ask for confirmation before doing some server code
     public void askConfirmation(Player player, String message, Runnable action) {
         serverActions.put(player.getUUID(), action);
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketAskConfirmation(message));
+        LostEditMessages.sendToPlayer(new PacketAskConfirmation(message), player);
     }
 
     // Ask for a confirmation conditionally
@@ -61,8 +58,7 @@ public class ServerGui {
 
     // Show message
     public void showMessage(Player player, String message) {
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketShowMessage(message));
+        LostEditMessages.sendToPlayer(new PacketShowMessage(message), player);
     }
 
     public void confirm(Player player) {
@@ -87,7 +83,6 @@ public class ServerGui {
     }
 
     public void openScreen(Player player, PacketOpenScreen.Screen screen) {
-        LostEditMessages.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player),
-                new PacketOpenScreen(screen));
+        LostEditMessages.sendToPlayer(new PacketOpenScreen(screen), player);
     }
 }

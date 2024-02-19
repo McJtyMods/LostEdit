@@ -18,28 +18,28 @@ public class AskConfirmation extends GuiItemScreen {
     private final String message;
 
     public AskConfirmation(String message) {
-        super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
+        super(0, 0, ManualEntry.EMPTY);
         this.message = message;
     }
 
     @Override
     public void init() {
-        window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/askconfirmation.gui"));
+        window = new Window(this, new ResourceLocation(LostEdit.MODID, "gui/askconfirmation.gui"));
         super.init();
         ((Label)window.findChild("message")).text(message);
         ((Button)window.findChild("yes")).event(() -> {
-            network.sendToServer(new PacketConfirm());
+            LostEditMessages.sendToServer(new PacketConfirm());
             super.onClose();
         });
         ((Button)window.findChild("no")).event(() -> {
-            network.sendToServer(new PacketCancel());
+            LostEditMessages.sendToServer(new PacketCancel());
             super.onClose();
         });
     }
 
     @Override
     public void onClose() {
-        network.sendToServer(new PacketCancel());
+        LostEditMessages.sendToServer(new PacketCancel());
         super.onClose();
     }
 

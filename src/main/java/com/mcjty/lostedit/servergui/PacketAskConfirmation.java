@@ -1,30 +1,32 @@
 package com.mcjty.lostedit.servergui;
 
+import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.AskConfirmation;
+import mcjty.lib.network.CustomPacketPayload;
+import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.resources.ResourceLocation;
 
-import java.util.function.Supplier;
+public record PacketAskConfirmation(String message) implements CustomPacketPayload {
 
-public class PacketAskConfirmation {
+    public static final ResourceLocation ID = new ResourceLocation(LostEdit.MODID, "askconfirmation");
 
-    private final String message;
-
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void write(FriendlyByteBuf buf) {
         buf.writeUtf(message);
     }
 
-    public PacketAskConfirmation(FriendlyByteBuf buf) {
-        message = buf.readUtf(32767);
+    @Override
+    public ResourceLocation id() {
+        return ID;
     }
 
-    public PacketAskConfirmation(String message) {
-        this.message = message;
+    public static PacketAskConfirmation create(FriendlyByteBuf buf) {
+        return new PacketAskConfirmation(buf.readUtf(32767));
     }
 
-    public void handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context ctx = supplier.get();
-        ctx.enqueueWork(() -> {
+    public void handle(PlayPayloadContext ctx) {
+        ctx.workHandler().submitAsync(() -> {
             try {
                 AskConfirmation.open(message);
             } catch (Exception e) {
@@ -32,6 +34,5 @@ public class PacketAskConfirmation {
                 throw new RuntimeException(e);
             }
         });
-        ctx.setPacketHandled(true);
     }
 }

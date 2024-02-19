@@ -2,7 +2,6 @@ package com.mcjty.lostedit.client.gui;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.ProjectInfoHolder;
-import com.mcjty.lostedit.network.LostEditMessages;
 import mcjty.lib.gui.*;
 import mcjty.lib.gui.widgets.Label;
 import mcjty.lib.gui.widgets.WidgetList;
@@ -15,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
 
     public PartsEditorScreen() {
-        super(LostEditMessages.INSTANCE, 0, 0, ManualEntry.EMPTY);
+        super(0, 0, ManualEntry.EMPTY);
     }
 
     private Label partWidget;
@@ -24,7 +23,7 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
 
     @Override
     public void init() {
-        window = new Window(this, LostEditMessages.INSTANCE, new ResourceLocation(LostEdit.MODID, "gui/partseditor.gui"));
+        window = new Window(this, new ResourceLocation(LostEdit.MODID, "gui/partseditor.gui"));
         super.init();
         ClientTools.enableKeyboardRepeat();
 
