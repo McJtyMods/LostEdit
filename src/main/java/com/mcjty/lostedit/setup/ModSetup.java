@@ -12,7 +12,7 @@ public class ModSetup extends DefaultModSetup {
 
     @Override
     public void init(FMLCommonSetupEvent e) {
-        LostEditMessages.registerMessages("lostedit");
+        LostEditMessages.registerMessages();
         e.enqueueWork(() -> {
             ProjectCommands.registerCommands();
             PartCommands.registerCommands();
