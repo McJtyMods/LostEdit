@@ -3,8 +3,8 @@ package com.mcjty.lostedit.setup;
 import com.mcjty.lostedit.project.Project;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.eventbus.api.SubscribeEvent;
 
 import static com.mcjty.lostedit.LostEdit.manager;
 

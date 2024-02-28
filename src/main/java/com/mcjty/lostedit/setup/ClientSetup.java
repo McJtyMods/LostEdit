@@ -2,7 +2,7 @@ package com.mcjty.lostedit.setup;
 
 import com.mcjty.lostedit.LostEdit;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 import java.util.List;
 

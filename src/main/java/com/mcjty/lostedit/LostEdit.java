@@ -8,12 +8,12 @@ import com.mcjty.lostedit.setup.ForgeEventHandlers;
 import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.api.distmarker.Dist;
+import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.eventbus.api.IEventBus;
+import net.neoforged.neoforge.fml.common.Mod;
+import net.neoforged.neoforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.neoforge.fml.loading.FMLEnvironment;
 
 import java.util.function.Supplier;
 

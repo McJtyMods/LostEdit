@@ -6,7 +6,7 @@ import mcjty.lib.typed.Type;
 import mcjty.lib.typed.TypedMap;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.List;

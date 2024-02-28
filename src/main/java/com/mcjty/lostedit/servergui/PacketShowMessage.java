@@ -6,7 +6,7 @@ import mcjty.lib.network.CustomPacketPayload;
 import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 

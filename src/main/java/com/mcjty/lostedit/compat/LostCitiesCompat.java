@@ -1,7 +1,7 @@
 package com.mcjty.lostedit.compat;
 
 import mcjty.lostcities.api.ILostCities;
-import net.minecraftforge.fml.InterModComms;
+import net.neoforged.neoforge.fml.InterModComms;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
