@@ -9,8 +9,8 @@ import com.mcjty.lostedit.setup.ModSetup;
 import com.mcjty.lostedit.setup.Registration;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.api.distmarker.Dist;
-import net.neoforged.neoforge.common.MinecraftForge;
-import net.neoforged.neoforge.eventbus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.fml.common.Mod;
 import net.neoforged.neoforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.neoforge.fml.loading.FMLEnvironment;
@@ -36,7 +36,7 @@ public class LostEdit {
         instance = this;
         Registration.register(bus);
         bus.addListener(setup::init);
-        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        NeoForge.EVENT_BUS.register(new ForgeEventHandlers());
 
         if (dist.isClient()) {
             bus.addListener(ClientSetup::initClient);

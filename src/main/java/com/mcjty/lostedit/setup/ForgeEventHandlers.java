@@ -4,7 +4,7 @@ import com.mcjty.lostedit.project.Project;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 import static com.mcjty.lostedit.LostEdit.manager;
 
