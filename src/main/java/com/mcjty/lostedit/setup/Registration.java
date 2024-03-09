@@ -3,7 +3,6 @@ package com.mcjty.lostedit.setup;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.items.EditorWand;
-import mcjty.lib.setup.DeferredItem;
 import mcjty.lib.setup.DeferredItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
