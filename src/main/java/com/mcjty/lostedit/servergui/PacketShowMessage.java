@@ -2,13 +2,9 @@ package com.mcjty.lostedit.servergui;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.ShowMessage;
-import mcjty.lib.network.CustomPacketPayload;
-import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
 
 public record PacketShowMessage(String message) implements CustomPacketPayload {
 

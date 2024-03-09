@@ -2,7 +2,6 @@ package com.mcjty.lostedit.network;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.servergui.*;
-import mcjty.lib.network.IPayloadRegistrar;
 import mcjty.lib.network.Networking;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

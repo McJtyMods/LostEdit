@@ -2,8 +2,6 @@ package com.mcjty.lostedit.servergui;
 
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.AskParameters;
-import mcjty.lib.network.CustomPacketPayload;
-import mcjty.lib.network.PlayPayloadContext;
 import mcjty.lib.network.TypedMapTools;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

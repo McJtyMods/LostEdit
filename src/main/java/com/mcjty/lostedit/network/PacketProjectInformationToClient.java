@@ -3,8 +3,6 @@ package com.mcjty.lostedit.network;
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.ProjectInfo;
 import com.mcjty.lostedit.client.ProjectInfoHolder;
-import mcjty.lib.network.CustomPacketPayload;
-import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 

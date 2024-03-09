@@ -3,8 +3,6 @@ package com.mcjty.lostedit.servergui;
 import com.mcjty.lostedit.LostEdit;
 import com.mcjty.lostedit.client.gui.PartsEditorScreen;
 import com.mcjty.lostedit.client.gui.ProjectScreen;
-import mcjty.lib.network.CustomPacketPayload;
-import mcjty.lib.network.PlayPayloadContext;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
