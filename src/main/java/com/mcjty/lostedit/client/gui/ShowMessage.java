@@ -30,8 +30,8 @@ public class ShowMessage extends GuiItemScreen {
     }
 
     @Override
-    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
-        drawWindow(poseStack);
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float partialTicks) {
+        drawWindow(poseStack, mouseX, mouseY, partialTicks);
     }
 
     public static void open(String message) {

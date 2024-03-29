@@ -31,14 +31,14 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float partialTicks) {
         if (window == null) {
             return;
         }
         projectNameWidget.text(ProjectInfoHolder.getProjectInfo().projectName());
         partsGlobalWidget.text(String.valueOf(ProjectInfoHolder.getProjectInfo().partsGlobal()));
         partsProjectWidget.text(String.valueOf(ProjectInfoHolder.getProjectInfo().partsProject().size()));
-        drawWindow(poseStack);
+        drawWindow(poseStack, mouseX, mouseY, partialTicks);
     }
 
     public static void open() {
@@ -83,9 +83,9 @@ public class ProjectScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    public boolean mouseScrolledFromEvent(double x, double y, double amount) {
+    public boolean mouseScrolledFromEvent(double x, double y, double dx, double dy) {
         WindowManager manager = getWindow().getWindowManager();
-        manager.mouseScrolled(x, y, amount);
+        manager.mouseScrolled(x, y, dx);
         return true;
     }
 }

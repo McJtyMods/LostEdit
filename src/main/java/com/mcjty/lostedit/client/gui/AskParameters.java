@@ -132,8 +132,8 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
-        drawWindow(poseStack);
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float partialTicks) {
+        drawWindow(poseStack, mouseX, mouseY, partialTicks);
     }
 
     public static void open(String message, List<ServerGui.Parameter> input) {
@@ -178,9 +178,9 @@ public class AskParameters extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    public boolean mouseScrolledFromEvent(double x, double y, double amount) {
+    public boolean mouseScrolledFromEvent(double x, double y, double dx, double dy) {
         WindowManager manager = getWindow().getWindowManager();
-        manager.mouseScrolled(x, y, amount);
+        manager.mouseScrolled(x, y, dx);
         return true;
     }
 }

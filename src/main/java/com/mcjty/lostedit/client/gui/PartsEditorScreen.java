@@ -43,10 +43,10 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float ppartialTicks) {
+    protected void renderInternal(GuiGraphics poseStack, int mouseX, int mouseY, float partialTicks) {
         partWidget.text(ProjectInfoHolder.getProjectInfo().partName());
         populateList();
-        drawWindow(poseStack);
+        drawWindow(poseStack, mouseX, mouseY, partialTicks);
     }
 
     public static void open() {
@@ -91,9 +91,9 @@ public class PartsEditorScreen extends GuiItemScreen implements IKeyReceiver {
     }
 
     @Override
-    public boolean mouseScrolledFromEvent(double x, double y, double amount) {
+    public boolean mouseScrolledFromEvent(double x, double y, double dx, double dy) {
         WindowManager manager = getWindow().getWindowManager();
-        manager.mouseScrolled(x, y, amount);
+        manager.mouseScrolled(x, y, dx);
         return true;
     }
 }
